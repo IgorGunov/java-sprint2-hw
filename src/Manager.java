@@ -185,6 +185,7 @@ public class Manager {
                 } else {
                     System.out.println("Задачи с таким идентификатором нет");
                 }
+                break;
             }
             case (2) : {
                 System.out.println("С каким идентификатором менять статус таск ?");
@@ -196,9 +197,11 @@ public class Manager {
                 } else {
                     System.out.println("Задачи с таким идентификатором нет");
                 }
+                break;
             }
             default : {
                 System.out.println("Такого типа задачи нет");
+                break;
             }
         }
     }
