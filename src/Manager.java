@@ -1,78 +1,74 @@
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
 
 public class Manager {
-    static Scanner scanner = new Scanner(System.in);
     static int id = 0;
-    static HashMap<Integer, Task> task = new HashMap<>();
-    static HashMap<Integer, Subtask> subtaskTask = new HashMap<>();
-    static HashMap<Integer, Epic> epicTask = new HashMap<>();
+    HashMap<Integer, Task> task = new HashMap<>();
+    HashMap<Integer, Subtask> subtaskTask = new HashMap<>();
+    HashMap<Integer, Epic> epicTask = new HashMap<>();
 
-    public static void printTask() {
+    public void printTask() {
         for (Integer idTask : task.keySet()) {
-            System.out.println("ID : " + task.get(idTask).id + " title : " + task.get(idTask).title
-                    + " description : " + task.get(idTask).description + " status : " + task.get(idTask).status);
+            System.out.println("ID : " + task.get(idTask).getId()
+                    + " title : " + task.get(idTask).getTitle()
+                    + " description : " + task.get(idTask).getDescription()
+                    + " status : " + task.get(idTask).getStatus());
         }
     }
 
-    public static void printEpic() {
+    public void printEpic() {
         for (Integer idEpic : epicTask.keySet()) {
-            System.out.println("ID : " + epicTask.get(idEpic).id + " title : " + epicTask.get(idEpic).title
-                    + " description : " + epicTask.get(idEpic).description + " status : " + epicTask.get(idEpic).status);
+            System.out.println("ID : " + epicTask.get(idEpic).getId()
+                    + " title : " + epicTask.get(idEpic).getTitle()
+                    + " description : " + epicTask.get(idEpic).getDescription()
+                    + " status : " + epicTask.get(idEpic).getStatus());
         }
     }
 
-    public static void printSubtask() {
+    public void printSubtask() {
         for (Integer idSubtask : subtaskTask.keySet()) {
-            System.out.println("ID : " + subtaskTask.get(idSubtask).id + " title : " + subtaskTask.get(idSubtask).title
-                    + " description : " + subtaskTask.get(idSubtask).description + " status : " + subtaskTask.get(idSubtask).status);
+            System.out.println("ID : " + subtaskTask.get(idSubtask).getId()
+                    + " title : " + subtaskTask.get(idSubtask).getTitle()
+                    + " description : " + subtaskTask.get(idSubtask).getDescription()
+                    + " status : " + subtaskTask.get(idSubtask).getStatus());
         }
     }
 
-    public static void gettingListAllSubtask() {
-        System.out.println("Какого эпика вывести все подзадачи ? Введите id");
-        printEpic();
-        int id = scanner.nextInt();
+    public int gettingListAllSubtask(int id) {
         if (epicTask.containsKey(id)) {
             if (epicTask.get(id).idSubtask != null) {
                 printsubtaskTaskOnId(epicTask.get(id).idSubtask);
+                return 0;
             } else {
-                System.out.println("В данном эпике нет сабтасков");
+                return 1;
             }
         } else {
-            System.out.println("Такого эпика нет");
+            return 2;
         }
     }
 
-    public static void printsubtaskTaskOnId(ArrayList<Integer> id) {
+    public void printsubtaskTaskOnId(ArrayList<Integer> id) {
         for (Integer ids : id) {
-            System.out.println("ID : " + subtaskTask.get(ids).id + " title : " + subtaskTask.get(ids).title
-                    + " description : " + subtaskTask.get(ids).description + " status : " + subtaskTask.get(ids).status);
+            System.out.println("ID : " + subtaskTask.get(ids).getId()
+                    + " title : " + subtaskTask.get(ids).getTitle()
+                    + " description : " + subtaskTask.get(ids).getDescription()
+                    + " status : " + subtaskTask.get(ids).getStatus());
         }
     }
 
-    public static void gettingTaskById(){
-        System.out.println("Какой номер задачи вам нужен ?");
-        int numberId = scanner.nextInt();
+    public void gettingTaskById(int numberId){
         if (task.containsKey(numberId)) {
-            System.out.println(task.get(numberId).title);
+            System.out.println(task.get(numberId).getTitle());
         } else if (subtaskTask.containsKey(numberId)) {
-            System.out.println(subtaskTask.get(numberId).title);
+            System.out.println(subtaskTask.get(numberId).getTitle());
         } else if (epicTask.containsKey(numberId)) {
-            System.out.println(epicTask.get(numberId).title);
+            System.out.println(epicTask.get(numberId).getTitle());
         } else {
             System.out.println("Задачи с таким идентификатором нет");
         }
     }
 
-    public static void addendumTask() {
-        System.out.println("Что вы хотите добавить ?\n 1 - epic\n 2 - subtask\n 3 - task");
-        int typeTask = scanner.nextInt();
-        System.out.println("Введите название, описание через enter");
-        String title = scanner.next();
-        String description = scanner.next();
-
+    public void addendumTask(int typeTask, String title, String description, int epicId) {
         switch (typeTask) {
             case (1) : {
                 Epic epic = new Epic(title, description, id);
@@ -81,16 +77,11 @@ public class Manager {
                 break;
             }
             case (2) : {
-                Subtask subtask = new Subtask(title, description, id);
-                subtaskTask.put(id, subtask);
-                System.out.println("К какому эпику добавить сабтаск ?");
-                printEpic();
-                int epicId = scanner.nextInt();
                 if (epicTask.containsKey(epicId) && epicTask.get(epicId) != null) {
+                    Subtask subtask = new Subtask(title, description, id);
+                    subtaskTask.put(id, subtask);
                     epicTask.get(epicId).idSubtask.add(id);
                     id++;
-                } else {
-                    System.out.println("Такого эпика нет");
                 }
                 break;
             }
@@ -104,31 +95,26 @@ public class Manager {
         }
     }
 
-    public static void updateTask(int idTask, Object task, int titleTask) {
+    public void updateTask(int idTask, Object newTask, int titleTask) {
         switch (titleTask) {
             case (1): {
-                Manager.epicTask.put(idTask, (Epic) task);
+                epicTask.put(idTask, (Epic) newTask);
                 break;
             }
             case (2): {
-                Manager.subtaskTask.put(idTask, (Subtask) task);
+                subtaskTask.put(idTask, (Subtask) newTask);
                 break;
             }
             case (3): {
-                Manager.task.put(idTask, (Task) task);
+                task.put(idTask, (Task) newTask);
                 break;
             }
         }
     }
 
-    public static void deleteTask() {
-        System.out.println("Удалить полностью - 1\n Удалить по идентификатору - 2");
-        int number = scanner.nextInt();/*поменять название переменную*/
-
+    public void deleteTask(int number, int type, int typeId) {
         switch (number) {
             case (1) : {
-                System.out.println("Какой тип удалить ?\n 1 - epic\n 2 - subtask\n 3 - task");
-                int type = scanner.nextInt();
                 switch (type) {
                     case (1) : {
                         epicTask.clear();
@@ -150,8 +136,6 @@ public class Manager {
                 break;
             }
             case (2) : {
-                System.out.println("С каким идентификатором удалить задачу ");
-                int typeId = scanner.nextInt();
                 if (epicTask.containsKey(typeId)) {
                     epicTask.remove(typeId);
                 } else if (task.containsKey(typeId)) {
@@ -164,39 +148,24 @@ public class Manager {
                 break;
             }
             default : {
-                System.out.println("Такой команды нет");
                 break;
             }
         }
     }
 
-    public static void updateStatusTask() {
-        System.out.println("Статус чего вы хотите обновить ?\n 1 - subtask\n 2 - task");
-        int typeTask = scanner.nextInt();
+    public void updateStatusTask(int typeTask, int idSubtask, int idTask, String status) {
         switch (typeTask) {
             case (1) : {
-                System.out.println("С каким идентификатором менять статус сабтаска ?");
-                printSubtask();
-                int idSubtask = scanner.nextInt();
                 if (subtaskTask.containsKey(idSubtask)) {
-                    System.out.println("На какой статус(NEW, IN_PROGRESS, DONE) менять ?");
-                    subtaskTask.get(idSubtask).status = scanner.next();
+                    subtaskTask.get(idSubtask).setStatus(status);
                     chekStatus();
-                } else {
-                    System.out.println("Задачи с таким идентификатором нет");
                 }
                 break;
             }
             case (2) : {
-                System.out.println("С каким идентификатором менять статус таск ?");
-                printTask();
-                int idTask = scanner.nextInt();
                 if (task.containsKey(idTask)) {
-                    System.out.println("На какой статус(NEW, IN_PROGRESS, DONE) менять ?");
-                    task.get(idTask).status = scanner.nextLine();
-                } else {
-                    System.out.println("Задачи с таким идентификатором нет");
-                }
+                    task.get(idTask).setStatus(status);
+                } else
                 break;
             }
             default : {
@@ -206,18 +175,18 @@ public class Manager {
         }
     }
 
-    public static void chekStatus() {
+    public void chekStatus() {
         String statusChek;
         int error = 0;
         for (Epic epic: epicTask.values()) {
-            statusChek = subtaskTask.get(epic.idSubtask.get(0)).status;
+            statusChek = subtaskTask.get(epic.idSubtask.get(0)).getStatus();
             for (Integer subtask: epic.idSubtask) {
-                if (!subtaskTask.get(subtask).status.equals(statusChek)) {
+                if (!subtaskTask.get(subtask).getStatus().equals(statusChek)) {
                     error ++;
                 }
             }
             if (error == 0) {
-                epic.status = statusChek;
+                epic.setStatus(statusChek);
             } else {
                 error = 0;
             }
