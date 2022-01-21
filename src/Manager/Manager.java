@@ -1,11 +1,17 @@
+package Manager;
+
+import Task.Epic;
+import Task.Subtask;
+import Task.Task;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Manager {
     static int id = 0;
-    HashMap<Integer, Task> task = new HashMap<>();
-    HashMap<Integer, Subtask> subtaskTask = new HashMap<>();
-    HashMap<Integer, Epic> epicTask = new HashMap<>();
+    public HashMap<Integer, Task> task = new HashMap<>();
+    public HashMap<Integer, Subtask> subtaskTask = new HashMap<>();
+    public HashMap<Integer, Epic> epicTask = new HashMap<>();
 
     public void printTask() {
         for (Integer idTask : task.keySet()) {
@@ -36,8 +42,8 @@ public class Manager {
 
     public int gettingListAllSubtask(int id) {
         if (epicTask.containsKey(id)) {
-            if (epicTask.get(id).idSubtask != null) {
-                printsubtaskTaskOnId(epicTask.get(id).idSubtask);
+            if (epicTask.get(id).getIdSubtask() != null) {
+                printsubtaskTaskOnId(epicTask.get(id).getIdSubtask());
                 return 0;
             } else {
                 return 1;
@@ -80,7 +86,7 @@ public class Manager {
                 if (epicTask.containsKey(epicId) && epicTask.get(epicId) != null) {
                     Subtask subtask = new Subtask(title, description, id);
                     subtaskTask.put(id, subtask);
-                    epicTask.get(epicId).idSubtask.add(id);
+                    epicTask.get(epicId).setIdSubtask(id);
                     id++;
                 }
                 break;
@@ -179,8 +185,8 @@ public class Manager {
         String statusChek;
         int error = 0;
         for (Epic epic: epicTask.values()) {
-            statusChek = subtaskTask.get(epic.idSubtask.get(0)).getStatus();
-            for (Integer subtask: epic.idSubtask) {
+            statusChek = subtaskTask.get(epic.getIdSubtask().get(0)).getStatus();
+            for (Integer subtask: epic.getIdSubtask()) {
                 if (!subtaskTask.get(subtask).getStatus().equals(statusChek)) {
                     error ++;
                 }

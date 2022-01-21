@@ -1,3 +1,7 @@
+package Task;
+
+import Manager.Manager;
+
 import java.util.ArrayList;
 
 public class Epic {
@@ -6,8 +10,7 @@ public class Epic {
     private int id;
     private String status;
 
-    ArrayList<Integer> idSubtask = new ArrayList<>();
-    static Manager manager = new Manager();
+    private ArrayList<Integer> idSubtask = new ArrayList<>();
 
     public Epic(String title, String description, int id) {
         this.title = title;
@@ -52,7 +55,7 @@ public class Epic {
         return idSubtask;
     }
 
-    public void setIdSubtask(ArrayList<Integer> idSubtask) {
-        this.idSubtask = idSubtask;
+    public void setIdSubtask(int id) {
+        idSubtask.add(id);
     }
 }
