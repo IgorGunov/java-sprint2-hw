@@ -1,15 +1,17 @@
-package Task;
+package task;
 
-public class Task {
+public class Subtask {
     private String title;
     private String description;
     private int id;
     private String status;
+    private int idEpic;
 
-    public Task(String title, String description, int id) {
+    public Subtask(String title, String description, int id, int idEpic) {
         this.title = title;
         this.description = description;
         this.id = id;
+        this.idEpic = idEpic;
         this.status = "NEW";
     }
 
@@ -31,5 +33,13 @@ public class Task {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public void setIdEpic(int idEpic) {
+        this.idEpic = idEpic;
+    }
+
+    public int getIdEpic() {
+        return idEpic;
     }
 }

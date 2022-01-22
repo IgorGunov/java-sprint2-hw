@@ -1,6 +1,4 @@
-package Task;
-
-import Manager.Manager;
+package task;
 
 import java.util.ArrayList;
 

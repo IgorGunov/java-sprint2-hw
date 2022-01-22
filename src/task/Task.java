@@ -1,12 +1,12 @@
-package Task;
+package task;
 
-public class Subtask {
+public class Task {
     private String title;
     private String description;
     private int id;
     private String status;
 
-    public Subtask(String title, String description, int id) {
+    public Task(String title, String description, int id) {
         this.title = title;
         this.description = description;
         this.id = id;
