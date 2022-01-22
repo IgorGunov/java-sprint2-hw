@@ -44,11 +44,6 @@ public class Manager {
         }
     }
 
-    public void addendumEpic(Epic epic) {
-        epicTask.put(id, epic);
-        id ++;
-    }
-
     public void addendumTask(Object newTask) {
         if (newTask instanceof Task) {
             task.put(id, (Task) newTask);

@@ -27,9 +27,7 @@ public class Main {
                 int numberId = scanner.nextInt();
                 manager.gettingTaskById(numberId);
             } else if (number == 4) {
-                manager.addendumEpic(new Epic("эпикэпику","reger",10,"new"));
-
-                System.out.println("Что вы хотите добавить ?\n 1 - epic\n 2 - subtask\n 3 - task");
+                 System.out.println("Что вы хотите добавить ?\n 1 - epic\n 2 - subtask\n 3 - task");
                 int typeTask = scanner.nextInt();
                 System.out.println("Введите название, описание через enter");
                 String title = scanner.next();
