@@ -35,6 +35,7 @@ public class Main {
                 if (typeTask == 1) {
                     Epic epic = new Epic(title, description, Manager.getId(), "NEW");
                     manager.addendumTask(epic);
+                    System.out.println(manager.epicTask);
                 } else if (typeTask == 2) {
                     System.out.println("К какому эпику добавить сабтаск ?");
                     printEpic();
@@ -107,8 +108,6 @@ public class Main {
                 int id = scanner.nextInt();
                 manager.deleteTaskId(id);
             } else if (number == 8) {
-
-
                 System.out.println("Статус чего вы хотите обновить ?\n 1 - subtask\n 2 - task");
                 int typeTask = scanner.nextInt();
                 System.out.println("На какой статус(NEW, IN_PROGRESS, DONE) менять ?");
@@ -117,42 +116,26 @@ public class Main {
                     System.out.println("С каким идентификатором менять статус сабтаска ?");
                     printSubtask();
                     int idSubtask = scanner.nextInt();
-                    Subtask subtask = new Subtask(manager.subtaskTask.get(idSubtask).getTitle(), manager.subtaskTask.get(idSubtask).getDescription(), manager.subtaskTask.get(idSubtask).getId(), manager.subtaskTask.get(idSubtask).getIdEpic(), status);
+                    String title = manager.subtaskTask.get(idSubtask).getTitle();
+                    String description = manager.subtaskTask.get(idSubtask).getDescription();
+                    int idTasks = manager.subtaskTask.get(idSubtask).getId();
+                    int idEpic = manager.subtaskTask.get(idSubtask).getIdEpic();
+                    manager.task.remove(idSubtask);
+                    Subtask subtask = new Subtask(title, description, idTasks, idEpic, status);
                     manager.addendumTask(subtask);
                 } else if (typeTask == 2) {
                     System.out.println("С каким идентификатором менять статус таск ?");
                     printTask();
                     int idTask = scanner.nextInt();
-                    Task task = new Task(manager.task.get(idTask).getTitle(), manager.task.get(idTask).getDescription(), manager.task.get(idTask).getId(), status);
-                    manager.updateStatusTask(typeTask, 0, idTask, status);
+                    String title = manager.task.get(idTask).getTitle();
+                    String description = manager.task.get(idTask).getDescription();
+                    int idTasks = manager.task.get(idTask).getId();
+                    manager.task.remove(idTask);
+                    Task task = new Task(title, description, idTasks , status);
+                    manager.addendumTask(task);
                 } else {
                     System.out.println("Такой команды нет");
                 }
-
-
-
-
-               /* System.out.println("Статус чего вы хотите обновить ?\n 1 - subtask\n 2 - task");
-                int typeTask = scanner.nextInt();
-                if (typeTask == 1) {
-                    System.out.println("С каким идентификатором менять статус сабтаска ?");
-                    printSubtask();
-                    int idSubtask = scanner.nextInt();
-                    System.out.println("На какой статус(NEW, IN_PROGRESS, DONE) менять ?");
-                    String status = scanner.next();
-                    manager.updateStatusTask(typeTask, idSubtask, 0, status);
-                } else if (typeTask == 2) {
-                    System.out.println("С каким идентификатором менять статус таск ?");
-                    printTask();
-                    int idTask = scanner.nextInt();
-                    System.out.println("На какой статус(NEW, IN_PROGRESS, DONE) менять ?");
-                    String status = scanner.next();
-                    manager.updateStatusTask(typeTask, 0, idTask, status);
-                } else {
-                    System.out.println("Такой команды нет");
-                }*/
-
-
             } else if (number == 9) {
                 manager.chekStatus();
                 printEpic();

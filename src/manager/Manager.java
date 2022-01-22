@@ -45,15 +45,15 @@ public class Manager {
     }
 
     public void addendumTask(Object newTask) {
-        if (newTask instanceof Task) {
-            task.put(id, (Task) newTask);
-            id ++;
-        } else if (newTask instanceof Epic) {
+         if (newTask instanceof Epic) {
             epicTask.put(id, (Epic) newTask);
             id ++;
         } else if (newTask instanceof Subtask) {
             subtaskTask.put(id, (Subtask) newTask);
-        } else {
+        } else if (newTask instanceof Task) {
+             task.put(id, (Task) newTask);
+             id ++;
+         } else {
             System.out.println("Ошибка ввода");
         }
     }
@@ -103,44 +103,25 @@ public class Manager {
         }
     }
 
-    public void updateStatusTask(int typeTask, int idSubtask, int idTask, String status) {
-        switch (typeTask) {
-            case (1) : {
-                if (subtaskTask.containsKey(idSubtask)) {
-                    subtaskTask.get(idSubtask).setStatus(status);
-                }
-                break;
-            }
-            case (2) : {
-                if (task.containsKey(idTask)) {
-                    task.get(idTask).setStatus(status);
-                }
-                break;
-            }
-            default : {
-                System.out.println("Такого типа задачи нет");
-                break;
-            }
-        }
-    }
-
     public void chekStatus() {
         String statusChek;
         int error = 0;
         for (Epic epic: epicTask.values()) {
-            statusChek = subtaskTask.get(epic.getIdSubtask().get(0)).getStatus();
-            for (Integer subtask: epic.getIdSubtask()) {
-                if (!subtaskTask.get(subtask).getStatus().equals(statusChek)) {
-                    error ++;
+            if (epic.getIdSubtask().size() != 0) {
+                statusChek = subtaskTask.get(epic.getIdSubtask().get(0)).getStatus();
+                for (Integer subtask : epic.getIdSubtask()) {
+                    if (!subtaskTask.get(subtask).getStatus().equals(statusChek)) {
+                        error++;
+                    }
                 }
-            }
-            if (error == 0) {
-                epic.setStatus(statusChek);
-            } else if (error < epic.getIdSubtask().size()) {
-                epic.setStatus("IN_PROGRESS");
-                error = 0;
-            } else {
-                error = 0;
+                if (error == 0) {
+                    epic.setStatus(statusChek);
+                } else if (error < epic.getIdSubtask().size()) {
+                    epic.setStatus("IN_PROGRESS");
+                    error = 0;
+                } else {
+                    error = 0;
+                }
             }
         }
     }
