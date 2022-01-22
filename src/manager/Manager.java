@@ -32,8 +32,6 @@ public class Manager {
         Manager.id = id + 1;
     }
 
-
-
     public void gettingTaskById(int numberId){
         if (task.containsKey(numberId)) {
             System.out.println(task.get(numberId).getTitle());
@@ -44,6 +42,11 @@ public class Manager {
         } else {
             System.out.println("Задачи с таким идентификатором нет");
         }
+    }
+
+    public void addendumEpic(Epic epic) {
+        epicTask.put(id, epic);
+        id ++;
     }
 
     public void addendumTask(Object newTask) {
