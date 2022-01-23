@@ -34,20 +34,18 @@ public class Main {
                 String description = scanner.next();
                 if (typeTask == 1) {
                     Epic epic = new Epic(title, description, Manager.getId(), "NEW");
-                    manager.addendumTask(epic);
-                    System.out.println(manager.epicTask);
+                    manager.addendumEpic(Manager.getId(), epic);
                 } else if (typeTask == 2) {
                     System.out.println("К какому эпику добавить сабтаск ?");
                     printEpic();
                     int epicId = scanner.nextInt();
                     Subtask subtask = new Subtask(title, description, Manager.getId(), epicId, "NEW");
-                    manager.addendumTask(subtask);
+                    manager.addendumSubtask(Manager.getId(), subtask);
                     manager.epicTask.get(epicId).setIdSubtask(Manager.getId());
-                    manager.subtaskTask.get(Manager.getId()).setIdEpic(epicId);
                     Manager.setId(Manager.getId());
                 } else if (typeTask == 3) {
                     Task task = new Task(title, description, Manager.getId(), "NEW");
-                    manager.addendumTask(task);
+                    manager.addendumTask(Manager.getId(), task);
                 } else {
                     System.out.println("Такой команды нет");
                 }
@@ -118,11 +116,10 @@ public class Main {
                     int idSubtask = scanner.nextInt();
                     String title = manager.subtaskTask.get(idSubtask).getTitle();
                     String description = manager.subtaskTask.get(idSubtask).getDescription();
-                    int idTasks = manager.subtaskTask.get(idSubtask).getId();
                     int idEpic = manager.subtaskTask.get(idSubtask).getIdEpic();
-                    manager.task.remove(idSubtask);
-                    Subtask subtask = new Subtask(title, description, idTasks, idEpic, status);
-                    manager.addendumTask(subtask);
+                    manager.subtaskTask.remove(idSubtask);
+                    Subtask subtask = new Subtask(title, description, idSubtask, idEpic, status);
+                    manager.addendumSubtask(idSubtask, subtask);
                 } else if (typeTask == 2) {
                     System.out.println("С каким идентификатором менять статус таск ?");
                     printTask();
@@ -132,7 +129,7 @@ public class Main {
                     int idTasks = manager.task.get(idTask).getId();
                     manager.task.remove(idTask);
                     Task task = new Task(title, description, idTasks , status);
-                    manager.addendumTask(task);
+                    manager.addendumTask(Manager.getId(), task);
                 } else {
                     System.out.println("Такой команды нет");
                 }
@@ -174,10 +171,10 @@ public class Main {
 
     public static void printsubtaskTaskOnId(ArrayList<Integer> id) {
         for (Integer ids : id) {
-            System.out.println("ID : " + manager.getSubtaskTask().get(ids).getId()
-                    + " title : " + manager.getSubtaskTask().get(ids).getTitle()
-                    + " description : " + manager.getSubtaskTask().get(ids).getDescription()
-                    + " status : " + manager.getSubtaskTask().get(ids).getStatus());
+                System.out.println("ID : " + manager.getSubtaskTask().get(ids).getId()
+                        + " title : " + manager.getSubtaskTask().get(ids).getTitle()
+                        + " description : " + manager.getSubtaskTask().get(ids).getDescription()
+                        + " status : " + manager.getSubtaskTask().get(ids).getStatus());
         }
     }
 
