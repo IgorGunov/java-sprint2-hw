@@ -15,6 +15,10 @@ public class Epic extends Task {
     }
 
     public void setIdSubtask(int id) {
-        idSubtask.add(id);
+            idSubtask.add(id);
+    }
+
+    public void removeIdArraylist(Object id) {
+        idSubtask.remove(id);
     }
 }
