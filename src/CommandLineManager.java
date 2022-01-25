@@ -1,12 +1,10 @@
-import manager.Manager;
+/*import manager.Manager;
 import task.Epic;
 import task.Subtask;
 import task.Task;
-
-import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Main {
+public class CommandLineManager {
     private static final Scanner scanner = new Scanner(System.in);
     private static final Manager manager = new Manager();
 
@@ -45,7 +43,58 @@ public class Main {
                     System.out.println("Такой команды нет");
                 }
             } else if (number == 5) {
-                UpdateTask.updateTask();
+                System.out.println("Обновить какую задачу вы хотите ?\n 1 - epic\n 2 - subtask\n 3 - task");
+                int typeTask = scanner.nextInt();
+                switch (typeTask) {
+                    case 1: {
+                        Main.printEpic();
+                        break;
+                    }
+                    case 2: {
+                        Main.printSubtask();
+                        break;
+                    }
+                    case 3: {
+                        Main.printTask();
+                        break;
+                    }
+                    default: break;
+                }
+                System.out.println("С каким идентификатором обновить задачу ?");
+                int idTask = scanner.nextInt();
+                System.out.println("Введите название, описание через enter");
+                String title = scanner.next();
+                String description = scanner.next();
+                switch (typeTask) {
+                    case (1) : {
+                        manager.getEpicTasks().remove(idTask);
+                        Epic epic = new Epic(title, description, idTask, "NEW");
+                        if (manager.updateTask(epic)) {
+                            System.out.println("Нет задачи с таким id");
+                        }
+                        break;
+                    }
+                    case (2) : {
+                        manager.getSubtaskTasks().remove(idTask);
+                        Subtask subtask = new Subtask(title, description, idTask, manager.getSubtaskTasks().get(idTask).getIdEpic(), "NEW");
+                        if (manager.updateTask(subtask)) {
+                            System.out.println("Нет задачи с таким id");
+                        }
+                        break;
+                    }
+                    case (3) : {
+                        manager.getTasks().remove(idTask);
+                        Task tasks = new Task(title, description, idTask, "NEW");
+                        if (manager.updateTask(tasks)) {
+                            System.out.println("Нет задачи с таким id");
+                        }
+                        break;
+                    }
+                    default : {
+                        System.out.println("Такого типа задачи нет");
+                        break;
+                    }
+                }
             } else if (number == 6) {
                 System.out.println("Какого типа удалить все задачи ?\n 1 - epic\n 2 - subtask\n 3 - task");
                 int type = scanner.nextInt();
@@ -107,55 +156,4 @@ public class Main {
             }else System.out.println("Такой команды нет");
         }
     }
-
-    public static void printTask() {
-        for (Integer idTask : manager.getTasks().keySet()) {
-            System.out.println("ID : " + manager.getTasks().get(idTask).getId()
-                    + " title : " + manager.getTasks().get(idTask).getTitle()
-                    + " description : " + manager.getTasks().get(idTask).getDescription()
-                    + " status : " + manager.getTasks().get(idTask).getStatus());
-        }
-    }
-
-    public static void printEpic() {
-        for (Integer idEpic : manager.getEpicTasks().keySet()) {
-            System.out.println("ID : " + manager.getEpicTasks().get(idEpic).getId()
-                    + " title : " + manager.getEpicTasks().get(idEpic).getTitle()
-                    + " description : " + manager.getEpicTasks().get(idEpic).getDescription()
-                    + " status : " + manager.getEpicTasks().get(idEpic).getStatus());
-        }
-    }
-
-    public static void printSubtask() {
-        for (Integer idSubtask : manager.getSubtaskTasks().keySet()) {
-            System.out.println("ID : " + manager.getSubtaskTasks().get(idSubtask).getId()
-                    + " title : " + manager.getSubtaskTasks().get(idSubtask).getTitle()
-                    + " description : " + manager.getSubtaskTasks().get(idSubtask).getDescription()
-                    + " status : " + manager.getSubtaskTasks().get(idSubtask).getStatus());
-        }
-    }
-
-    public static void printSubtaskTaskOnId(ArrayList<Integer> id) {
-        for (Integer ids : id) {
-                System.out.println("ID : " + manager.getSubtaskTasks().get(ids).getId()
-                        + " title : " + manager.getSubtaskTasks().get(ids).getTitle()
-                        + " description : " + manager.getSubtaskTasks().get(ids).getDescription()
-                        + " status : " + manager.getSubtaskTasks().get(ids).getStatus());
-        }
-    }
-
-    public static int printMenu() {
-        System.out.println("Что вы хотите сделать ?\n" +
-                "1- получения списка всех задач\n" +
-                "2- получение списка всех подзадач определенного эпика\n" +
-                "3- получение задачи любого типа по идентификатору\n" +
-                "4- добавление новой задачи, эпика, подзадачи\n" +
-                "5- обновление залачи любого типа по идентификатору\n" +
-                "6- удаление задач\n" +
-                "7- удаление задач по id\n" +
-                "8- обновление статусом\n" +
-                "9- Вывод всех эпиков\n" +
-                "10- выход");
-        return scanner.nextInt();
-    }
-}
+}*/

@@ -1,9 +1,7 @@
 package manager;
-
 import task.Epic;
 import task.Subtask;
 import task.Task;
-
 import java.util.HashMap;
 
 public class Manager {
@@ -37,49 +35,68 @@ public class Manager {
             return task.get(numberId);
         } else if (subtaskTask.containsKey(numberId)) {
             return subtaskTask.get(numberId);
-        } else return epicTask.getOrDefault(numberId, null);
+        } else {
+            return epicTask.getOrDefault(numberId, null);
+        }
     }
 
     public void addSubtask(Subtask subtask) {
-        subtaskTask.put(subtask.getId(), subtask);
         if (epicTask.containsKey(subtask.getIdEpic())) {
+            subtaskTask.put(subtask.getId(), subtask);
             epicTask.get(subtask.getIdEpic()).setIdSubtask(subtask.getId());
+            chekStatus();
         }
     }
 
     public void addEpic(Epic epic) {
         epicTask.put(epic.getId(), epic);
+        if (!epicTask.get(epic.getId()).getIdSubtask().isEmpty()) {
+            for (Integer idSubtaskInEpic: epicTask.get(getId()).getIdSubtask()) {
+                for (int idSubtask: subtaskTask.keySet()) {
+                    if (idSubtask == idSubtaskInEpic && subtaskTask.get(idSubtask).getIdEpic() == 0) {
+                        subtaskTask.get(idSubtask).setIdEpic(idSubtaskInEpic);
+                    }
+                }
+            }
+        }
     }
 
     public void addTask(Task tasks) {
         task.put(tasks.getId(), tasks);
     }
 
-    public boolean updateTask(int idTask, Task newTask) {
-        if (newTask instanceof Epic && epicTask.containsKey(idTask)) {
-            epicTask.put(idTask, (Epic) newTask);
+    public boolean updateTask(Task newTask) {
+        if (newTask instanceof Epic && epicTask.containsKey(newTask.getId())) {
+            epicTask.put(newTask.getId(), (Epic) newTask);
             return false;
-        } else if (newTask instanceof Subtask && subtaskTask.containsKey(idTask)) {
-            subtaskTask.put(idTask, (Subtask) newTask);
+        } else if (newTask instanceof Subtask && subtaskTask.containsKey(newTask.getId())) {
+            subtaskTask.put(newTask.getId(), (Subtask) newTask);
+            chekStatus();
             return false;
-        } else if (task.containsKey(idTask)) {
-            task.put(idTask, newTask);
+        } else if (task.containsKey(newTask.getId())) {
+            task.put(newTask.getId(), newTask);
             return false;
         } else {
             return true;
         }
     }
 
-    public void deleteEpic() {
+    public void deleteAllEpic() {
         epicTask.clear();
         subtaskTask.clear();
     }
 
-    public void deleteSubtask() {
+    public void deleteAllSubtask() {
         subtaskTask.clear();
+        for (Epic epic : epicTask.values()) {
+            for (Integer idSubtask: epic.getIdSubtask()) {
+                epic.removeIdArraylist(idSubtask);
+            }
+        }
+        chekStatus();
     }
 
-    public void deleteTask() {
+    public void deleteAllTask() {
         task.clear();
     }
 
