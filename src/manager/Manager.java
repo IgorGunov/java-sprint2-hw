@@ -30,6 +30,19 @@ public class Manager {
         return id;
     }
 
+    public void removeTask(int idTask) {
+        if (task.containsKey(idTask)) {
+            task.remove(idTask);
+            System.out.println("Удален таск");
+        } else if (subtaskTask.containsKey(idTask)) {
+            subtaskTask.remove(idTask);
+            System.out.println("Удален сабтаск");
+        } else {
+            epicTask.remove(idTask);
+            System.out.println("Удален эпиктаск");
+        }
+    }
+
     public Task getTaskById(int numberId){
         if (task.containsKey(numberId)) {
             return task.get(numberId);
@@ -63,22 +76,6 @@ public class Manager {
 
     public void addTask(Task tasks) {
         task.put(tasks.getId(), tasks);
-    }
-
-    public boolean updateTask(Task newTask) {
-        if (newTask instanceof Epic && epicTask.containsKey(newTask.getId())) {
-            epicTask.put(newTask.getId(), (Epic) newTask);
-            return false;
-        } else if (newTask instanceof Subtask && subtaskTask.containsKey(newTask.getId())) {
-            subtaskTask.put(newTask.getId(), (Subtask) newTask);
-            chekStatus();
-            return false;
-        } else if (task.containsKey(newTask.getId())) {
-            task.put(newTask.getId(), newTask);
-            return false;
-        } else {
-            return true;
-        }
     }
 
     public void deleteAllEpic() {
