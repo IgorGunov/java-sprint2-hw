@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class Epic extends Task {
     private ArrayList<Subtask> arrayListSubtask = new ArrayList<>();
 
-    public Epic(String title, String description, int id, String status) {
+    public Epic(String title, String description, int id, Status status) {
         super(title, description, id, status);
     }
 
@@ -26,22 +26,22 @@ public class Epic extends Task {
     }
 
     @Override
-    public String getStatus() {
+    public Status getStatus() {
         int numberNew = 0;
         int numberDone = 0;
         for (Subtask sub : getArrayListSubtask()) {
-            if (sub.getStatus().equals("NEW")) {
+            if (sub.getStatus().equals(Status.NEW)) {
                 numberNew++;
-            } else if (sub.getStatus().equals("DONE")) {
+            } else if (sub.getStatus().equals(Status.DONE)) {
                 numberDone++;
             }
         }
         if (getArrayListSubtask().size() == numberNew) {
-            return "NEW";
+            return Status.NEW;
         } else if (getArrayListSubtask().size() == numberDone || getArrayListSubtask().size() == 0) {
-            return "DONE";
+            return Status.DONE;
         } else {
-            return "IN_PROGRESS";
+            return Status.IN_PROGRESS;
         }
     }
 }

@@ -1,14 +1,14 @@
-import manager.Manager;
+import manager.InMemoryTaskManager;
 import task.Epic;
+import task.Status;
 import task.Subtask;
 import task.Task;
-
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
-    private static final Manager manager = new Manager();
+    private static final InMemoryTaskManager manager = new InMemoryTaskManager();
 
     public static void main(String[] args) {
         while (true) {
@@ -56,16 +56,16 @@ public class Main {
         String title = scanner.next();
         String description = scanner.next();
         if (typeTask == 1) {
-            Epic epic = new Epic(title, description, manager.getId(), "NEW");
+            Epic epic = new Epic(title, description, manager.getId(), Status.NEW);
             manager.addEpic(epic);
         } else if (typeTask == 2) {
             System.out.println("К какому эпику добавить сабтаск ?");
             printEpic();
             int epicId = scanner.nextInt();
-            Subtask subtask = new Subtask(title, description, manager.getId(), epicId, "NEW");
+            Subtask subtask = new Subtask(title, description, manager.getId(), epicId, Status.NEW);
             manager.addSubtask(subtask);
         } else if (typeTask == 3) {
-            Task task = new Task(title, description, manager.getId(), "NEW");
+            Task task = new Task(title, description, manager.getId(), Status.NEW);
             manager.addTask(task);
         } else {
             System.out.println("Такой команды нет");
@@ -82,14 +82,14 @@ public class Main {
             if (!manager.getEpicTasks().get(idTask).getArrayListSubtask().isEmpty()) {
                 ArrayList<Subtask> sub = manager.getEpicTasks().get(idTask).getArrayListSubtask();
                 manager.getEpicTasks().remove(idTask);
-                Epic epic = new Epic(title, description, idTask, "NEW");
+                Epic epic = new Epic(title, description, idTask, Status.NEW);
                 for (Subtask subs: sub) {
                     epic.setArrayListSubtask(subs);
                 }
                 manager.updateTask(epic);
             } else {
                 manager.getEpicTasks().remove(idTask);
-                Epic epic = new Epic(title, description, idTask, "NEW");
+                Epic epic = new Epic(title, description, idTask, Status.NEW);
                 manager.updateTask(epic);
             }
         } else if (manager.getSubtaskTasks().containsKey(idTask)) {
@@ -101,13 +101,13 @@ public class Main {
                 }
             }
             manager.getSubtaskTasks().remove(idTask);
-            Subtask subtask = new Subtask(title, description, idTask, getEpic, "NEW");
+            Subtask subtask = new Subtask(title, description, idTask, getEpic, Status.NEW);
             manager.updateTask(subtask);
             manager.getEpicTasks().get(getEpic).setArrayListSubtask(subtask);
         } else if (manager.getTasks().containsKey(idTask)) {
             printTask();
             manager.deleteTaskId(idTask);
-            Task tasks = new Task(title, description, idTask, "NEW");
+            Task tasks = new Task(title, description, idTask, Status.NEW);
             manager.updateTask(tasks);
         } else {
             System.out.println("Такого типа задачи нет");
@@ -137,8 +137,14 @@ public class Main {
     public static void updateStatus() {
         System.out.println("Статус чего вы хотите обновить ?\n 1 - subtask\n 2 - task");
         int typeTask = scanner.nextInt();
-        System.out.println("На какой статус(NEW, IN_PROGRESS, DONE) менять ?");
-        String status = scanner.next();
+        System.out.println("На какой статус(NEW - 1, IN_PROGRESS - 2, DONE - 3) менять ?");
+        int statusNumber = scanner.nextInt();
+        Status status = Status.NEW;
+        if (statusNumber == 2) {
+            status = Status.DONE;
+        } else if (statusNumber == 3) {
+            status = Status.IN_PROGRESS;
+        }
         if (typeTask == 1) {
             System.out.println("С каким идентификатором менять статус сабтаска ?");
             printSubtask();
