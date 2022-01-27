@@ -1,43 +1,44 @@
 package task;
 
-import manager.Manager;
-
 import java.util.ArrayList;
 
 public class Epic extends Task {
-    private ArrayList<Integer> arrayListSubtask = new ArrayList<>();
+    private ArrayList<Subtask> arrayListSubtask = new ArrayList<>();
 
     public Epic(String title, String description, int id, String status) {
         super(title, description, id, status);
     }
 
-    public ArrayList<Integer> getArrayListSubtask() {
+    public ArrayList<Subtask> getArrayListSubtask() {
         return arrayListSubtask;
     }
 
-    public void setArrayListSubtask(Integer sub) {
+    public void setArrayListSubtask(Subtask sub) {
             arrayListSubtask.add(sub);
     }
 
-    public void removeIdArraylist(Epic epic) {
+    public void clearArrayList(Epic epic) {
         epic.arrayListSubtask.clear();
+    }
+
+    public void removeSubtaskInArrayList(Subtask sub) {
+        arrayListSubtask.remove(sub);
     }
 
     @Override
     public String getStatus() {
-        Manager manager = new Manager();
-        int statusNew = 0;
-        int statusDone = 0;
-        for (int i = 0; i < getArrayListSubtask().size(); i ++) {
-                if (manager.getSubtaskTasks().get(arrayListSubtask.get(i)).getStatus().equals("NEW")) {
-                    statusNew++;
-                } else if (manager.getSubtaskTasks().get(arrayListSubtask.get(i)).getStatus().equals("DONE")) {
-                    statusDone++;
-                }
+        int numberNew = 0;
+        int numberDone = 0;
+        for (Subtask sub : getArrayListSubtask()) {
+            if (sub.getStatus().equals("NEW")) {
+                numberNew++;
+            } else if (sub.getStatus().equals("DONE")) {
+                numberDone++;
+            }
         }
-        if (getArrayListSubtask().size() == statusNew) {
+        if (getArrayListSubtask().size() == numberNew) {
             return "NEW";
-        } else if (getArrayListSubtask().size() == statusDone || getArrayListSubtask().size() == 0) {
+        } else if (getArrayListSubtask().size() == numberDone || getArrayListSubtask().size() == 0) {
             return "DONE";
         } else {
             return "IN_PROGRESS";

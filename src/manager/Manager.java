@@ -42,7 +42,7 @@ public class Manager {
     public void addSubtask(Subtask subtask) {
         if (epicTask.containsKey(subtask.getIdEpic())) {
             subtaskTask.put(subtask.getId(), subtask);
-            epicTask.get(subtask.getIdEpic()).setArrayListSubtask(subtask.getId());
+            epicTask.get(subtask.getIdEpic()).setArrayListSubtask(subtask);
         }
     }
 
@@ -59,10 +59,10 @@ public class Manager {
     public void addEpic(Epic epic) {
         epicTask.put(epic.getId(), epic);
         if (!epicTask.get(epic.getId()).getArrayListSubtask().isEmpty()) {
-            for (Integer idSub: epicTask.get(getId()).getArrayListSubtask()) {
+            for (Subtask sub: epicTask.get(getId()).getArrayListSubtask()) {
                 for (int idSubtask: subtaskTask.keySet()) {
-                    if (idSubtask == subtaskTask.get(idSub).getId() && subtaskTask.get(idSubtask).getIdEpic() == 0) {
-                        subtaskTask.get(idSubtask).setIdEpic(idSub);
+                    if (idSubtask == sub.getId() && subtaskTask.get(idSubtask).getIdEpic() == 0) {
+                        subtaskTask.get(idSubtask).setIdEpic(sub.getId());
                     }
                 }
             }
@@ -81,7 +81,7 @@ public class Manager {
     public void deleteAllSubtask() {
         subtaskTask.clear();
         for (Epic epic : epicTask.values()) {
-            epic.removeIdArraylist(epic);
+            epic.clearArrayList(epic);
         }
     }
 
@@ -91,16 +91,16 @@ public class Manager {
 
     public void deleteTaskId(int idTask) {
         if (epicTask.containsKey(idTask)) {
-                for (Integer idSub : epicTask.get(idTask).getArrayListSubtask()) {
-                if (subtaskTask.get(idSub).getIdEpic() == idTask)
-                    subtaskTask.remove(idSub);
+                for (Subtask sub : epicTask.get(idTask).getArrayListSubtask()) {
+                if (sub.getIdEpic() == idTask)
+                    subtaskTask.remove(sub.getId());
             }
             epicTask.remove(idTask);
         } else if (task.containsKey(idTask)) {
             task.remove(idTask);
         } else if (subtaskTask.containsKey(idTask)) {
-            int idEpic = subtaskTask.get(idTask).getIdEpic();
-            epicTask.get(idEpic).removeIdArraylist(epicTask.get(idEpic));
+            epicTask.get(subtaskTask.get(idTask).getIdEpic()).removeSubtaskInArrayList(subtaskTask.get(idTask));
+            subtaskTask.remove(idTask);
         }
     }
 }
