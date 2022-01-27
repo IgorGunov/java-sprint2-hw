@@ -1,7 +1,5 @@
 package task;
 
-import manager.Manager;
-
 public class Task {
     private String title;
     private String description;
@@ -29,11 +27,5 @@ public class Task {
 
     public String getStatus() {
         return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-        Manager manager = new Manager();
-        manager.chekStatus();
     }
 }
