@@ -1,4 +1,6 @@
+import manager.HistoryManager;
 import manager.InMemoryTaskManager;
+import manager.Managers;
 import task.Epic;
 import task.Status;
 import task.Subtask;
@@ -9,6 +11,7 @@ import java.util.Scanner;
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
     private static final InMemoryTaskManager manager = new InMemoryTaskManager();
+    private static final HistoryManager history = Managers.getDefaultHistory();
 
     public static void main(String[] args) {
         while (true) {
@@ -31,11 +34,11 @@ public class Main {
                 updateStatus();
             } else if (number == 9) {
                 printEpic();
-                System.out.println("Такой команды нет");
-                for (Task tasks: manager.history()) {
-                    System.out.println(tasks.getId());
-                }
             } else if (number == 10) {
+                for (Task task: history.getHistory()) {
+                    System.out.println(task.getId());
+                }
+            } else if (number == 11) {
                 break;
             }else System.out.println("Такой команды нет");
         }
@@ -185,7 +188,8 @@ public class Main {
                 "7- удаление задач по id\n" +
                 "8- обновление статусом\n" +
                 "9- Вывод всех эпиков\n" +
-                "10- выход");
+                "10- Печать истории\n" +
+                "11- выход");
         return scanner.nextInt();
     }
 

@@ -2,8 +2,6 @@ package manager;
 import task.Epic;
 import task.Subtask;
 import task.Task;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class InMemoryTaskManager implements TaskManager {
@@ -11,7 +9,7 @@ public class InMemoryTaskManager implements TaskManager {
     private HashMap<Integer, Task> task = new HashMap<>();
     private HashMap<Integer, Subtask> subtaskTask = new HashMap<>();
     private HashMap<Integer, Epic> epicTask = new HashMap<>();
-    ArrayList<Task> history = new ArrayList<>();
+    private static final HistoryManager history = Managers.getDefaultHistory();
 
     @Override
     public HashMap<Integer, Task> getTasks() {
@@ -39,27 +37,14 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskById(int numberId){
         if (task.containsKey(numberId)) {
-            for (Task tasks: history) {
-                if (tasks == task.get(numberId)) {
-                    history.remove(tasks);
-                }
-            }
             history.add(task.get(numberId));
             return task.get(numberId);
         } else if (subtaskTask.containsKey(numberId)) {
-            for (Task tasks: history) {
-                if (tasks == subtaskTask.get(numberId)) {
-                    history.remove(tasks);
-                }
-            }
+
             history.add(subtaskTask.get(numberId));
             return subtaskTask.get(numberId);
         } else {
-            for (Task tasks: history) {
-                if (tasks == epicTask.get(numberId)) {
-                    history.remove(tasks);
-                }
-            }
+
             history.add(epicTask.get(numberId));
             return epicTask.getOrDefault(numberId, null);
         }
@@ -107,7 +92,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteAllEpic() {
         epicTask.clear();
         subtaskTask.clear();
-        for (Task tasks: history) {
+        for (Task tasks: history.getHistory()) {
             if (tasks instanceof Epic) {
                 history.remove(tasks);
             }
@@ -120,7 +105,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (Epic epic : epicTask.values()) {
             epic.clearArrayList(epic);
         }
-        for (Task tasks: history) {
+        for (Task tasks: history.getHistory()) {
             if (tasks instanceof Subtask) {
                 history.remove(tasks);
             }
@@ -129,7 +114,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void deleteAllTask() {
-        for (Task tasks: history) {
+        for (Task tasks: history.getHistory()) {
             for (Task task1: task.values()) {
                 if (task1 == tasks) {
                     history.remove(tasks);
@@ -142,14 +127,30 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteTaskId(int idTask) {
         if (epicTask.containsKey(idTask)) {
-                for (Subtask sub : epicTask.get(idTask).getArrayListSubtask()) {
-                if (sub.getIdEpic() == idTask)
+            for (Subtask sub : epicTask.get(idTask).getArrayListSubtask()) {
+                if (sub.getIdEpic() == idTask) {
                     subtaskTask.remove(sub.getId());
+                }
+            }
+            for (Task tasks: history.getHistory()) {
+                if (tasks == epicTask.get(idTask)) {
+                    history.remove(tasks);
+                }
             }
             epicTask.remove(idTask);
         } else if (task.containsKey(idTask)) {
+            for (Task tasks: history.getHistory()) {
+                if (tasks == task.get(idTask)) {
+                    history.remove(tasks);
+                }
+            }
             task.remove(idTask);
         } else if (subtaskTask.containsKey(idTask)) {
+            for (Task tasks: history.getHistory()) {
+                if (tasks == subtaskTask.get(idTask)) {
+                    history.remove(tasks);
+                }
+            }
             epicTask.get(subtaskTask.get(idTask).getIdEpic()).removeSubtaskInArrayList(subtaskTask.get(idTask));
             subtaskTask.remove(idTask);
         }
