@@ -31,6 +31,10 @@ public class Main {
                 updateStatus();
             } else if (number == 9) {
                 printEpic();
+                System.out.println("Такой команды нет");
+                for (Task tasks: manager.history()) {
+                    System.out.println(tasks.getId());
+                }
             } else if (number == 10) {
                 break;
             }else System.out.println("Такой команды нет");

@@ -11,23 +11,20 @@ public class InMemoryTaskManager implements TaskManager {
     private HashMap<Integer, Task> task = new HashMap<>();
     private HashMap<Integer, Subtask> subtaskTask = new HashMap<>();
     private HashMap<Integer, Epic> epicTask = new HashMap<>();
-    private ArrayList<Task> history = new ArrayList<>();
+    ArrayList<Task> history = new ArrayList<>();
 
     @Override
     public HashMap<Integer, Task> getTasks() {
-        history.addAll(task.values());
         return new HashMap<>(task);
     }
 
     @Override
     public HashMap<Integer, Subtask> getSubtaskTasks() {
-        history.addAll(subtaskTask.values());
         return new HashMap<>(subtaskTask);
     }
 
     @Override
     public HashMap<Integer, Epic> getEpicTasks() {
-        history.addAll(epicTask.values());
         return new HashMap<>(epicTask);
     }
 
@@ -39,13 +36,6 @@ public class InMemoryTaskManager implements TaskManager {
         return id;
     }
 
-    public ArrayList<Task> history() {
-        while (history.size() > 10) {
-            history.remove(0);
-        }
-        return history;
-    }
-
     @Override
     public Task getTaskById(int numberId){
         if (task.containsKey(numberId)) {
@@ -54,6 +44,7 @@ public class InMemoryTaskManager implements TaskManager {
                     history.remove(tasks);
                 }
             }
+            history.add(task.get(numberId));
             return task.get(numberId);
         } else if (subtaskTask.containsKey(numberId)) {
             for (Task tasks: history) {
@@ -61,6 +52,7 @@ public class InMemoryTaskManager implements TaskManager {
                     history.remove(tasks);
                 }
             }
+            history.add(subtaskTask.get(numberId));
             return subtaskTask.get(numberId);
         } else {
             for (Task tasks: history) {
@@ -68,6 +60,7 @@ public class InMemoryTaskManager implements TaskManager {
                     history.remove(tasks);
                 }
             }
+            history.add(epicTask.get(numberId));
             return epicTask.getOrDefault(numberId, null);
         }
     }
