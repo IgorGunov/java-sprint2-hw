@@ -5,7 +5,7 @@ import task.Epic;
 import task.Status;
 import task.Subtask;
 import task.Task;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -35,7 +35,7 @@ public class Main {
             } else if (number == 9) {
                 printEpic();
             } else if (number == 10) {
-                for (Task task: history.getHistory()) {
+                for (Task task: manager.getHistoryManager().getHistory()) {
                     System.out.println(task.getId());
                 }
             } else if (number == 11) {
@@ -48,7 +48,7 @@ public class Main {
         System.out.println("Какого эпика вывести все подзадачи ? Введите id");
         printEpic();
         int id = scanner.nextInt();
-        printSubtaskTaskOnId(manager.getEpicTasks().get(id).getArrayListSubtask());
+        printSubtaskTaskOnId(manager.getEpicTasks().get(id).getListSubtask());
     }
 
     public static void printTaskOnId() {
@@ -86,12 +86,12 @@ public class Main {
         String title = scanner.next();
         String description = scanner.next();
         if (manager.getEpicTasks().containsKey(idTask)) {
-            if (!manager.getEpicTasks().get(idTask).getArrayListSubtask().isEmpty()) {
-                ArrayList<Subtask> sub = manager.getEpicTasks().get(idTask).getArrayListSubtask();
+            if (!manager.getEpicTasks().get(idTask).getListSubtask().isEmpty()) {
+                List<Subtask> sub = manager.getEpicTasks().get(idTask).getListSubtask();
                 manager.getEpicTasks().remove(idTask);
                 Epic epic = new Epic(title, description, idTask, Status.NEW);
                 for (Subtask subs: sub) {
-                    epic.setArrayListSubtask(subs);
+                    epic.addSubtaskInList(subs);
                 }
                 manager.updateTask(epic);
             } else {
@@ -101,16 +101,16 @@ public class Main {
             }
         } else if (manager.getSubtaskTasks().containsKey(idTask)) {
             int getEpic = manager.getSubtaskTasks().get(idTask).getIdEpic();
-            for (Subtask sub: manager.getEpicTasks().get(getEpic).getArrayListSubtask()) {
+            for (Subtask sub: manager.getEpicTasks().get(getEpic).getListSubtask()) {
                 if (sub.getId() == idTask) {
-                    manager.getEpicTasks().get(getEpic).removeSubtaskInArrayList(sub);
+                    manager.getEpicTasks().get(getEpic).removeSubtaskInList(sub);
                     break;
                 }
             }
             manager.getSubtaskTasks().remove(idTask);
             Subtask subtask = new Subtask(title, description, idTask, getEpic, Status.NEW);
             manager.updateTask(subtask);
-            manager.getEpicTasks().get(getEpic).setArrayListSubtask(subtask);
+            manager.getEpicTasks().get(getEpic).addSubtaskInList(subtask);
         } else if (manager.getTasks().containsKey(idTask)) {
             printTask();
             manager.deleteTaskId(idTask);
@@ -220,7 +220,7 @@ public class Main {
         }
     }
 
-    public static void printSubtaskTaskOnId(ArrayList<Subtask> subtask) {
+    public static void printSubtaskTaskOnId(List<Subtask> subtask) {
         for (Subtask sub: subtask) {
             System.out.println("ID : " + sub.getId()
                     + " title : " + sub.getTitle()

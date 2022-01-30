@@ -9,7 +9,7 @@ public class InMemoryTaskManager implements TaskManager {
     private HashMap<Integer, Task> task = new HashMap<>();
     private HashMap<Integer, Subtask> subtaskTask = new HashMap<>();
     private HashMap<Integer, Epic> epicTask = new HashMap<>();
-    private static final HistoryManager history = Managers.getDefaultHistory();
+    private HistoryManager history = Managers.getDefaultHistory();
 
     @Override
     public HashMap<Integer, Task> getTasks() {
@@ -54,7 +54,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void addSubtask(Subtask subtask) {
         if (epicTask.containsKey(subtask.getIdEpic())) {
             subtaskTask.put(subtask.getId(), subtask);
-            epicTask.get(subtask.getIdEpic()).setArrayListSubtask(subtask);
+            epicTask.get(subtask.getIdEpic()).addSubtaskInList(subtask);
         }
     }
 
@@ -72,8 +72,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void addEpic(Epic epic) {
         epicTask.put(epic.getId(), epic);
-        if (!epicTask.get(epic.getId()).getArrayListSubtask().isEmpty()) {
-            for (Subtask sub: epicTask.get(getId()).getArrayListSubtask()) {
+        if (!epicTask.get(epic.getId()).getListSubtask().isEmpty()) {
+            for (Subtask sub: epicTask.get(getId()).getListSubtask()) {
                 for (int idSubtask: subtaskTask.keySet()) {
                     if (idSubtask == sub.getId() && subtaskTask.get(idSubtask).getIdEpic() == 0) {
                         subtaskTask.get(idSubtask).setIdEpic(sub.getId());
@@ -93,7 +93,7 @@ public class InMemoryTaskManager implements TaskManager {
         epicTask.clear();
         subtaskTask.clear();
         for (Task tasks: history.getHistory()) {
-            if (tasks instanceof Epic) {
+            if (tasks instanceof Epic || tasks instanceof Subtask) {
                 history.remove(tasks);
             }
         }
@@ -103,7 +103,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteAllSubtask() {
         subtaskTask.clear();
         for (Epic epic : epicTask.values()) {
-            epic.clearArrayList(epic);
+            epic.clearList(epic);
         }
         for (Task tasks: history.getHistory()) {
             if (tasks instanceof Subtask) {
@@ -127,32 +127,26 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteTaskId(int idTask) {
         if (epicTask.containsKey(idTask)) {
-            for (Subtask sub : epicTask.get(idTask).getArrayListSubtask()) {
+            for (Subtask sub : epicTask.get(idTask).getListSubtask()) {
                 if (sub.getIdEpic() == idTask) {
+                    history.remove(sub);
                     subtaskTask.remove(sub.getId());
                 }
             }
-            for (Task tasks: history.getHistory()) {
-                if (tasks == epicTask.get(idTask)) {
-                    history.remove(tasks);
-                }
-            }
+            history.remove(epicTask.get(idTask));
             epicTask.remove(idTask);
         } else if (task.containsKey(idTask)) {
-            for (Task tasks: history.getHistory()) {
-                if (tasks == task.get(idTask)) {
-                    history.remove(tasks);
-                }
-            }
+            history.remove(task.get(idTask));
             task.remove(idTask);
         } else if (subtaskTask.containsKey(idTask)) {
-            for (Task tasks: history.getHistory()) {
-                if (tasks == subtaskTask.get(idTask)) {
-                    history.remove(tasks);
-                }
-            }
-            epicTask.get(subtaskTask.get(idTask).getIdEpic()).removeSubtaskInArrayList(subtaskTask.get(idTask));
+            history.remove(subtaskTask.get(idTask));
+            epicTask.get(subtaskTask.get(idTask).getIdEpic()).removeSubtaskInList(subtaskTask.get(idTask));
             subtaskTask.remove(idTask);
         }
+    }
+
+    @Override
+    public HistoryManager getHistoryManager() {
+        return history;
     }
 }

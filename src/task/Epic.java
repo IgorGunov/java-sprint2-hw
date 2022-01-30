@@ -1,27 +1,28 @@
 package task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Epic extends Task {
-    private ArrayList<Subtask> arrayListSubtask = new ArrayList<>();
+    private List<Subtask> arrayListSubtask = new ArrayList<>();
 
     public Epic(String title, String description, int id, Status status) {
         super(title, description, id, status);
     }
 
-    public ArrayList<Subtask> getArrayListSubtask() {
+    public List<Subtask> getListSubtask() {
         return arrayListSubtask;
     }
 
-    public void setArrayListSubtask(Subtask sub) {
+    public void addSubtaskInList(Subtask sub) {
             arrayListSubtask.add(sub);
     }
 
-    public void clearArrayList(Epic epic) {
+    public void clearList(Epic epic) {
         epic.arrayListSubtask.clear();
     }
 
-    public void removeSubtaskInArrayList(Subtask sub) {
+    public void removeSubtaskInList(Subtask sub) {
         arrayListSubtask.remove(sub);
     }
 
@@ -29,16 +30,16 @@ public class Epic extends Task {
     public Status getStatus() {
         int numberNew = 0;
         int numberDone = 0;
-        for (Subtask sub : getArrayListSubtask()) {
+        for (Subtask sub : getListSubtask()) {
             if (sub.getStatus().equals(Status.NEW)) {
                 numberNew++;
             } else if (sub.getStatus().equals(Status.DONE)) {
                 numberDone++;
             }
         }
-        if (getArrayListSubtask().size() == numberNew) {
+        if (getListSubtask().size() == numberNew) {
             return Status.NEW;
-        } else if (getArrayListSubtask().size() == numberDone || getArrayListSubtask().size() == 0) {
+        } else if (getListSubtask().size() == numberDone || getListSubtask().size() == 0) {
             return Status.DONE;
         } else {
             return Status.IN_PROGRESS;

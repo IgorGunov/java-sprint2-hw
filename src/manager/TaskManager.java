@@ -33,4 +33,6 @@ public interface TaskManager {
     void deleteAllTask();
 
     void deleteTaskId(int idTask);
+
+    HistoryManager getHistoryManager();
 }
