@@ -18,8 +18,8 @@ public class Epic extends Task {
             arrayListSubtask.add(sub);
     }
 
-    public void clearList(Epic epic) {
-        epic.arrayListSubtask.clear();
+    public void clearList() {
+        arrayListSubtask.clear();
     }
 
     public void removeSubtaskInList(Subtask sub) {

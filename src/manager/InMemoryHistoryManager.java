@@ -21,6 +21,8 @@ public class InMemoryHistoryManager implements HistoryManager{
 
     @Override
     public void remove(Task task) {
-        history.remove(task);
+        while (history.contains(task)) {
+            history.remove(task);
+        }
     }
 }

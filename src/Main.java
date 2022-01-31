@@ -1,4 +1,3 @@
-import manager.HistoryManager;
 import manager.InMemoryTaskManager;
 import manager.Managers;
 import task.Epic;
@@ -10,8 +9,7 @@ import java.util.Scanner;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
-    private static final InMemoryTaskManager manager = new InMemoryTaskManager();
-    private static final HistoryManager history = Managers.getDefaultHistory();
+    private static final InMemoryTaskManager manager = Managers.getDefault();
 
     public static void main(String[] args) {
         while (true) {
@@ -35,7 +33,7 @@ public class Main {
             } else if (number == 9) {
                 printEpic();
             } else if (number == 10) {
-                for (Task task: manager.getHistoryManager().getHistory()) {
+                for (Task task: manager.getHistory()) {
                     System.out.println(task.getId());
                 }
             } else if (number == 11) {
@@ -100,7 +98,7 @@ public class Main {
                 manager.updateTask(epic);
             }
         } else if (manager.getSubtaskTasks().containsKey(idTask)) {
-            int getEpic = manager.getSubtaskTasks().get(idTask).getIdEpic();
+            int getEpic = manager.getSubtaskTasks().get(idTask).getEpicId();
             for (Subtask sub: manager.getEpicTasks().get(getEpic).getListSubtask()) {
                 if (sub.getId() == idTask) {
                     manager.getEpicTasks().get(getEpic).removeSubtaskInList(sub);
@@ -158,7 +156,7 @@ public class Main {
             int idSubtask = scanner.nextInt();
             String title = manager.getSubtaskTasks().get(idSubtask).getTitle();
             String description = manager.getSubtaskTasks().get(idSubtask).getDescription();
-            int idEpic = manager.getSubtaskTasks().get(idSubtask).getIdEpic();
+            int idEpic = manager.getSubtaskTasks().get(idSubtask).getEpicId();
             manager.deleteTaskId(idSubtask);
             Subtask subtask = new Subtask(title, description, idSubtask, idEpic, status);
             manager.addSubtask(subtask);
