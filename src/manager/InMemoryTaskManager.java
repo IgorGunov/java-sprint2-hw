@@ -42,11 +42,9 @@ public class InMemoryTaskManager implements TaskManager {
             history.add(task.get(numberId));
             return task.get(numberId);
         } else if (subtaskTask.containsKey(numberId)) {
-
             history.add(subtaskTask.get(numberId));
             return subtaskTask.get(numberId);
         } else {
-
             history.add(epicTask.get(numberId));
             return epicTask.getOrDefault(numberId, null);
         }
@@ -96,7 +94,7 @@ public class InMemoryTaskManager implements TaskManager {
         subtaskTask.clear();
         for (Task tasks: history.getHistory()) {
             if (tasks instanceof Epic || tasks instanceof Subtask) {
-                history.remove(tasks);
+                history.removeNode(tasks);
             }
         }
     }
@@ -109,7 +107,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
         for (Task tasks: history.getHistory()) {
             if (tasks instanceof Subtask) {
-                history.remove(tasks);
+                history.removeNode(tasks);
             }
         }
     }
@@ -119,7 +117,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (Task tasks: history.getHistory()) {
             for (Task task1: task.values()) {
                 if (task1 == tasks) {
-                    history.remove(tasks);
+                    history.removeNode(tasks);
                 }
             }
         }
@@ -131,17 +129,17 @@ public class InMemoryTaskManager implements TaskManager {
         if (epicTask.containsKey(idTask)) {
             for (Subtask sub : epicTask.get(idTask).getListSubtask()) {
                 if (sub.getEpicId() == idTask) {
-                    history.remove(sub);
+                    history.removeNode(sub);
                     subtaskTask.remove(sub.getId());
                 }
             }
-            history.remove(epicTask.get(idTask));
+            history.removeNode(epicTask.get(idTask));
             epicTask.remove(idTask);
         } else if (task.containsKey(idTask)) {
-            history.remove(task.get(idTask));
+            history.removeNode(task.get(idTask));
             task.remove(idTask);
         } else if (subtaskTask.containsKey(idTask)) {
-            history.remove(subtaskTask.get(idTask));
+            history.removeNode(subtaskTask.get(idTask));
             epicTask.get(subtaskTask.get(idTask).getEpicId()).removeSubtaskInList(subtaskTask.get(idTask));
             subtaskTask.remove(idTask);
         }
