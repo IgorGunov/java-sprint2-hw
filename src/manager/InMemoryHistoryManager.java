@@ -19,11 +19,21 @@ public class InMemoryHistoryManager implements HistoryManager{
     }
 
     @Override
-    public void removeNode(Node<Task> node) {
-        Node<Task> next = node.next;
-        Node<Task> prev = node.prev;
-        next.prev = prev;
-        prev.next = next;
+    public void removeNode(Node node) {
+        if (node.next != null && node.prev != null) {
+            Node<Task> next = node.next;
+            Node<Task> prev = node.prev;
+            next.prev = prev;
+            prev.next = next;
+        } else if (node.prev == null && node.next != null) {
+            history.head = node.next;
+            Node<Task> next = node.next;
+            next.prev = null;
+        } else if (node.next == null && node.prev != null) {
+            history.tail = node.prev;
+            Node<Task> prev = node.prev;
+            prev.next = null;
+        }
     }
 
     class MyLinkedList<Task> extends LinkedList {
@@ -33,29 +43,30 @@ public class InMemoryHistoryManager implements HistoryManager{
         private final HashMap<Integer, Node<Task>> entities = new HashMap<>();
 
         public void linkLast(int id, Task element) {
-            if (entities.containsKey(id)) {
-                removeNode((Node<task.Task>) entities.get(id));
-                entities.remove(id);
-            }
-            entities.put(id, (Node<Task>) element);
 
             final Node<Task> oldTail = tail;
-            final Node<Task> newNode = new Node<>(null, element, oldTail);
+            final Node<Task> newNode = new Node<>(oldTail, element, null);
             tail = newNode;
             if (oldTail == null)
                 head = newNode;
-
             else {
-                oldTail.prev = newNode;
+                oldTail.next = newNode;
             }
             size++;
+            if (entities.containsKey(id)) {
+                removeNode(entities.get(id));
+                entities.remove(id);
+            }
+            entities.put(id, newNode);
         }
 
-        public ArrayList<task.Task> getTask(MyLinkedList<task.Task> history) {
-            ArrayList<task.Task> listHistory = new ArrayList<>();
-            while (listHistory.size() != history.size()) {
-                Node<Task> oldTail = tail;
-                listHistory.add((task.Task) oldTail.data);
+        public ArrayList<Task> getTask(MyLinkedList<Task> history) {
+            ArrayList<Task> listHistory = new ArrayList<>();
+            Node<Task> oldTail = history.head;
+
+            while (oldTail != null) {
+                listHistory.add(oldTail.data);
+                oldTail = oldTail.next;
             }
             return listHistory;
         }

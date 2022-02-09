@@ -92,11 +92,6 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteAllEpic() {
         epicTask.clear();
         subtaskTask.clear();
-        for (Task tasks: history.getHistory()) {
-            if (tasks instanceof Epic || tasks instanceof Subtask) {
-                history.removeNode(tasks);
-            }
-        }
     }
 
     @Override
@@ -105,22 +100,10 @@ public class InMemoryTaskManager implements TaskManager {
         for (Epic epic : epicTask.values()) {
             epic.clearList();
         }
-        for (Task tasks: history.getHistory()) {
-            if (tasks instanceof Subtask) {
-                history.removeNode(tasks);
-            }
-        }
     }
 
     @Override
     public void deleteAllTask() {
-        for (Task tasks: history.getHistory()) {
-            for (Task task1: task.values()) {
-                if (task1 == tasks) {
-                    history.removeNode(tasks);
-                }
-            }
-        }
         task.clear();
     }
 
@@ -129,17 +112,13 @@ public class InMemoryTaskManager implements TaskManager {
         if (epicTask.containsKey(idTask)) {
             for (Subtask sub : epicTask.get(idTask).getListSubtask()) {
                 if (sub.getEpicId() == idTask) {
-                    history.removeNode(sub);
                     subtaskTask.remove(sub.getId());
                 }
             }
-            history.removeNode(epicTask.get(idTask));
             epicTask.remove(idTask);
         } else if (task.containsKey(idTask)) {
-            history.removeNode(task.get(idTask));
             task.remove(idTask);
         } else if (subtaskTask.containsKey(idTask)) {
-            history.removeNode(subtaskTask.get(idTask));
             epicTask.get(subtaskTask.get(idTask).getEpicId()).removeSubtaskInList(subtaskTask.get(idTask));
             subtaskTask.remove(idTask);
         }
