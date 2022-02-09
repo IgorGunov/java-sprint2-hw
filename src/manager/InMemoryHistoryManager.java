@@ -14,6 +14,15 @@ public class InMemoryHistoryManager implements HistoryManager{
     }
 
     @Override
+    public void removeNodeOnTask(Task task) {
+        for (Node<Task> x = history.head; x != null; x = x.next) {
+            if (x.data == task) {
+                removeNode(x);
+            }
+        }
+    }
+
+    @Override
     public ArrayList<Task> getHistory() {
         return history.getTask(history);
     }

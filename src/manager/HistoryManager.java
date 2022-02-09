@@ -10,4 +10,6 @@ public interface HistoryManager {
     List<Task> getHistory();
 
     void removeNode(Node<Task> node);
+
+    public void removeNodeOnTask(Task task);
 }
