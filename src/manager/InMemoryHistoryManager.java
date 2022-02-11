@@ -14,13 +14,12 @@ public class InMemoryHistoryManager implements HistoryManager{
     }
 
     @Override
-    public void removeNodeOnTask(task.Task task) {
-        MyLinkedList myLinkedList = new MyLinkedList();
-        HashMap<Integer, Node<Task>> entities = myLinkedList.getMap();
+    public void removeTaskFromHistory(task.Task task) {
+        HashMap<Integer, Node<Task>> entities = history.getMap();
         if (entities.containsKey(task.getId())) {
-            myLinkedList.removeNode(entities.get(task.getId()));
+            history.removeNode(entities.get(task.getId()));
             entities.remove(task.getId());
-            myLinkedList.setMap(entities);
+            history.setMap(entities);
         }
     }
 
@@ -77,6 +76,9 @@ public class InMemoryHistoryManager implements HistoryManager{
                 Node<task.Task> prev = node.getPrev();
                 prev.setNext(null);
                 size --;
+            } else {
+                tail = null;
+                head = null;
             }
         }
 

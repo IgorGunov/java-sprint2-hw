@@ -1,5 +1,5 @@
-import manager.InMemoryTaskManager;
 import manager.Managers;
+import manager.TaskManager;
 import task.Epic;
 import task.Status;
 import task.Subtask;
@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
-    private static final InMemoryTaskManager manager = Managers.getDefault();
+    private static final TaskManager manager = Managers.getDefault();
 
     public static void main(String[] args) {
         while (true) {

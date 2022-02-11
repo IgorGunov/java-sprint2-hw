@@ -21,11 +21,7 @@ class Node<E> {
     public Node<E> getPrev() {
         return prev;
     }
-
-    public void setData(E data) {
-        this.data = data;
-    }
-
+    
     public void setNext(Node<E> next) {
         this.next = next;
     }

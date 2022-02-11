@@ -9,5 +9,5 @@ public interface HistoryManager {
 
     List<Task> getHistory();
 
-    void removeNodeOnTask(Task task);
+    void removeTaskFromHistory(Task task);
 }
