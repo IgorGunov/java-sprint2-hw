@@ -13,6 +13,10 @@ public class Task {
         this.status = status;
     }
 
+    public String toString() {
+        return (getId() + "," + "Task" + "," + getTitle() + "," + getStatus() + "," + getDescription());
+    }
+
     public String getTitle() {
         return title;
     }

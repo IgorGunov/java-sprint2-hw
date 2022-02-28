@@ -1,3 +1,5 @@
+import manager.FileBackedTasksManager;
+import manager.InMemoryTaskManager;
 import manager.Managers;
 import manager.TaskManager;
 import task.Epic;
@@ -10,6 +12,7 @@ import java.util.Scanner;
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
     private static final TaskManager manager = Managers.getDefault();
+    private static final FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager("D:/word.txt");
 
     public static void main(String[] args) {
         while (true) {
@@ -38,6 +41,8 @@ public class Main {
                 }
             } else if (number == 11) {
                 break;
+            } else if (number == 12) {
+                q();
             }else System.out.println("Такой команды нет");
         }
     }
@@ -187,7 +192,8 @@ public class Main {
                 "8- обновление статусом\n" +
                 "9- Вывод всех эпиков\n" +
                 "10- Печать истории\n" +
-                "11- выход");
+                "11- выход\n" +
+                "12 - новая");
         return scanner.nextInt();
     }
 
@@ -225,5 +231,22 @@ public class Main {
                     + " description : " + sub.getDescription()
                     + " status : " + sub.getStatus());
         }
+    }
+
+    public static void q() {
+        Task task = new Task("приготовить ужин", "сходить в магазин", 0, Status.NEW);
+        Task task2 = new Task("принять ванную", "наюрать ванную", 1, Status.NEW);
+        Epic epic = new Epic("убраться", "123", 2, Status.NEW);
+        Subtask subtask = new Subtask("помыть пол", "набрать ведро", 3, 2, Status.NEW);
+        Subtask subtask1 = new Subtask("протереть пыль", "взять тряпку", 4, 2, Status.NEW);
+        fileBackedTasksManager.addTask(task);// так задача не добавляется, хотя все идет к тому же мотоду что и следующая строка
+        manager.addTask(task);//задача добавляется
+        printTask();
+
+        fileBackedTasksManager.addTask(task2);
+        fileBackedTasksManager.addEpic(epic);
+        manager.addSubtask(subtask);
+        manager.addSubtask(subtask1);
+        //FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager("D:/word.txt");
     }
 }
