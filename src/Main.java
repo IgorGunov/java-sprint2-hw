@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
-    private static final String fileName = "D:/word.txt";
+    private static final String fileName = "word.txt";
     private static final FileBackedTasksManager manager = new FileBackedTasksManager(fileName);
 
     public static void main(String[] args) {
