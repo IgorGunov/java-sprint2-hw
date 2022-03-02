@@ -1,21 +1,30 @@
 package manager;
 
-import task.Epic;
-import task.Status;
-import task.Subtask;
-import task.Task;
+import task.*;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager{
     private static String file;
+    private static final TaskManager manager = Managers.getDefault();
     public FileBackedTasksManager(String file) {
         this.file = file;
     }
 
-    public void save () {
+    public static void clearTheFile() {
+        try (FileWriter fwOb = new FileWriter(file, false);) {
+            PrintWriter pwOb = new PrintWriter(fwOb, false);
+            pwOb.flush();
+            pwOb.close();
+        } catch (IOException e) {
+            System.out.println("Ошибка при чистке файла");
+        }
+    }
+
+    private void save () {
+        clearTheFile();
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("id,type,Name,status,description,epic\n");
 
@@ -39,8 +48,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
         for (Task task: getHistory()) {
             quantitu ++ ;
             stringBuilder.append(task.getId());
-            if (quantitu < getHistory().size())
-            stringBuilder.append(",");
+            if (quantitu < getHistory().size()) {
+                stringBuilder.append(",");
+            }
         }
         stringBuilder.append("\n");
 
@@ -51,51 +61,40 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
         }
     }
 
-    public FileBackedTasksManager loadFromFile(String file) {
+    public void loadFromFile() {
         String fileContents = readFileContentsOrNull(file);
         String[] lines = fileContents.split("\\n");
         for (String line: lines) {
             fromString(line);
         }
-        return new FileBackedTasksManager(file);
     }
 
-    public void fromString(String value) {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
+    private void fromString(String value) {
         String[] elementLine = value.split(",");
-        if (value!= null) {
-            if (!value.equals("id,type,Name,status,description,epic") && !value.equals("")) {
-                if (elementLine.length > 3)
-                switch (elementLine[1]) {
-                    case "Task":
-                        addTask(new Task(elementLine[2], elementLine[4],
-                                Integer.parseInt(elementLine[0]), returnStatus(elementLine[3])));
-                        break;
-                    case "Epic":
-                        addEpic(new Epic(elementLine[2], elementLine[4],
-                                Integer.parseInt(elementLine[0]), returnStatus(elementLine[3])));
-                        break;
-                    case "Subtask":
-                        Subtask subtask = new Subtask(elementLine[2], elementLine[4], Integer.parseInt(elementLine[0]),
-                                Integer.parseInt(elementLine[5]), returnStatus(elementLine[3]));
-                        addSubtask(subtask);
-                        System.out.println(subtask);
-                        break;
-                    default:System.out.println("end");
-                }
-            } /*else if (!value.equals("id,type,Name,status,description,epic") && (elementLine.length == 1 ||
-                    (elementLine.length >= 3 && !(elementLine[1] instanceof String)))) {
-                for (String s: elementLine) {
-                    taskManager.getTaskById(Integer.parseInt(s));
-                }
-            }*/
+        if (!value.equals("id,type,Name,status,description,epic") && !value.equals("") && elementLine.length > 3) {
+            if (TypeTask.TASK.toString().equals(elementLine[0])) {
+                manager.addTask(new Task(TypeTask.TASK, elementLine[2], elementLine[4],
+                Integer.parseInt(elementLine[1]), returnStatus(elementLine[3])));
+            } else if (TypeTask.EPIC.toString().equals(elementLine[0])) {
+                manager.addEpic(new Epic(TypeTask.EPIC, elementLine[2], elementLine[4],
+                Integer.parseInt(elementLine[1]), returnStatus(elementLine[3])));
+            } else if (TypeTask.SUBTASK.toString().equals(elementLine[0])) {
+                manager.addSubtask(new Subtask(TypeTask.SUBTASK, elementLine[2], elementLine[4],
+                Integer.parseInt(elementLine[1]),
+                Integer.parseInt(elementLine[5]), returnStatus(elementLine[3])));
+            }
+        } else if (!value.equals("id,type,Name,status,description,epic") && !value.equals("")) {
+            for (int i = 0; i < elementLine.length; i++) {
+                getTaskById(Integer.parseInt(elementLine[i]));
+            }
         }
     }
 
-    public static Status returnStatus(String status) {
-        if (status.equals(Status.NEW)) {
+
+    private static Status returnStatus(String status) {
+        if (Status.NEW.toString().equals(status)) {
             return Status.NEW;
-        } else if (status.equals(Status.DONE)) {
+        } else if (Status.DONE.toString().equals(status)) {
             return Status.DONE;
         } else return Status.IN_PROGRESS;
 
@@ -127,14 +126,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
 
     @Override
     public Task getTaskById(int numberId) {
-        if (getEpicTasks().containsKey(numberId)) {
-            getHistory().add(getEpicTasks().get(numberId));
-        } else if (getSubtaskTasks().containsKey(numberId)) {
-            getHistory().add(getSubtaskTasks().get(numberId));
-        } else
-            getHistory().add(getTasks().get(numberId));
+        Task task = super.getTaskById(numberId);
         save();
-        return super.getTaskById(numberId);
+        return task;
     }
 
     @Override
@@ -161,17 +155,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
         save();
     }
 
-    @Override
-    public List<Task> getHistory() {
-        return super.getHistory();
-    }
-
     private static String readFileContentsOrNull(String path)
     {
         try {
             return Files.readString(Path.of(path));
         } catch (IOException e) {
-            System.out.println("Невозможно прочитать файл с месячным отчётом. Возможно, файл не находится в нужной директории.");
+            System.out.println("Невозможно прочитать файл с месячным отчётом. " +
+                    "Возможно, файл не находится в нужной директории.");
             return null;
         }
     }

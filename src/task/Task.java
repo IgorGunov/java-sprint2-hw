@@ -5,8 +5,10 @@ public class Task {
     private String description;
     private int id;
     private Status status;
+    private TypeTask typeTask;
 
-    public Task(String title, String description, int id, Status status) {
+    public Task(TypeTask typeTask, String title, String description, int id, Status status) {
+        this.typeTask = typeTask;
         this.title = title;
         this.description = description;
         this.id = id;
@@ -14,7 +16,11 @@ public class Task {
     }
 
     public String toString() {
-        return (getId() + "," + "Task" + "," + getTitle() + "," + getStatus() + "," + getDescription());
+        return (typeTask + "," + getId() + "," + getTitle() + "," + getStatus() + "," + getDescription());
+    }
+
+    public TypeTask getTypeTask() {
+        return typeTask;
     }
 
     public String getTitle() {

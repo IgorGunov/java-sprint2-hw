@@ -2,17 +2,16 @@ import manager.FileBackedTasksManager;
 import manager.InMemoryTaskManager;
 import manager.Managers;
 import manager.TaskManager;
-import task.Epic;
-import task.Status;
-import task.Subtask;
-import task.Task;
+import task.*;
+
+import java.io.File;
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
-    private static final TaskManager manager = Managers.getDefault();
-    private static final FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager("D:/word.txt");
+    private static final String fileName = "D:/word.txt";
+    private static final FileBackedTasksManager manager = new FileBackedTasksManager(fileName);
 
     public static void main(String[] args) {
         while (true) {
@@ -40,9 +39,11 @@ public class Main {
                     System.out.println(task.getId());
                 }
             } else if (number == 11) {
-                break;
+                manager.loadFromFile();
             } else if (number == 12) {
-                q();
+                test();
+            }  else if (number == 13) {
+                break;
             }else System.out.println("Такой команды нет");
         }
     }
@@ -66,16 +67,16 @@ public class Main {
         String title = scanner.next();
         String description = scanner.next();
         if (typeTask == 1) {
-            Epic epic = new Epic(title, description, manager.getId(), Status.NEW);
+            Epic epic = new Epic(TypeTask.EPIC, title, description, manager.getId(), Status.NEW);
             manager.addEpic(epic);
         } else if (typeTask == 2) {
             System.out.println("К какому эпику добавить сабтаск ?");
             printEpic();
             int epicId = scanner.nextInt();
-            Subtask subtask = new Subtask(title, description, manager.getId(), epicId, Status.NEW);
+            Subtask subtask = new Subtask(TypeTask.SUBTASK, title, description, manager.getId(), epicId, Status.NEW);
             manager.addSubtask(subtask);
         } else if (typeTask == 3) {
-            Task task = new Task(title, description, manager.getId(), Status.NEW);
+            Task task = new Task(TypeTask.TASK, title, description, manager.getId(), Status.NEW);
             manager.addTask(task);
         } else {
             System.out.println("Такой команды нет");
@@ -92,14 +93,14 @@ public class Main {
             if (!manager.getEpicTasks().get(idTask).getListSubtask().isEmpty()) {
                 List<Subtask> sub = manager.getEpicTasks().get(idTask).getListSubtask();
                 manager.getEpicTasks().remove(idTask);
-                Epic epic = new Epic(title, description, idTask, Status.NEW);
+                Epic epic = new Epic(TypeTask.EPIC, title, description, idTask, Status.NEW);
                 for (Subtask subs: sub) {
                     epic.addSubtaskInList(subs);
                 }
                 manager.updateTask(epic);
             } else {
                 manager.getEpicTasks().remove(idTask);
-                Epic epic = new Epic(title, description, idTask, Status.NEW);
+                Epic epic = new Epic(TypeTask.EPIC, title, description, idTask, Status.NEW);
                 manager.updateTask(epic);
             }
         } else if (manager.getSubtaskTasks().containsKey(idTask)) {
@@ -111,13 +112,13 @@ public class Main {
                 }
             }
             manager.getSubtaskTasks().remove(idTask);
-            Subtask subtask = new Subtask(title, description, idTask, getEpic, Status.NEW);
+            Subtask subtask = new Subtask(TypeTask.SUBTASK, title, description, idTask, getEpic, Status.NEW);
             manager.updateTask(subtask);
             manager.getEpicTasks().get(getEpic).addSubtaskInList(subtask);
         } else if (manager.getTasks().containsKey(idTask)) {
             printTask();
             manager.deleteTaskId(idTask);
-            Task tasks = new Task(title, description, idTask, Status.NEW);
+            Task tasks = new Task(TypeTask.TASK, title, description, idTask, Status.NEW);
             manager.updateTask(tasks);
         } else {
             System.out.println("Такого типа задачи нет");
@@ -163,7 +164,7 @@ public class Main {
             String description = manager.getSubtaskTasks().get(idSubtask).getDescription();
             int idEpic = manager.getSubtaskTasks().get(idSubtask).getEpicId();
             manager.deleteTaskId(idSubtask);
-            Subtask subtask = new Subtask(title, description, idSubtask, idEpic, status);
+            Subtask subtask = new Subtask(TypeTask.SUBTASK, title, description, idSubtask, idEpic, status);
             manager.addSubtask(subtask);
         } else if (typeTask == 2) {
             System.out.println("С каким идентификатором менять статус таск ?");
@@ -173,11 +174,26 @@ public class Main {
             String description = manager.getTasks().get(idTask).getDescription();
             int idTasks = manager.getTasks().get(idTask).getId();
             manager.deleteTaskId(idTask);
-            Task task = new Task(title, description, idTasks , status);
+            Task task = new Task(TypeTask.TASK, title, description, idTasks , status);
             manager.addTask(task);
         } else {
             System.out.println("Такой команды нет");
         }
+    }
+
+    public static void test() {
+        manager.addTask(new Task(TypeTask.TASK, "Погулять",
+                "Выйти из дома", 0,  Status.NEW));
+        manager.addEpic(new Epic(TypeTask.EPIC, "Уборка",
+                "генеральная", 1,  Status.NEW));
+        manager.addSubtask(new Subtask(TypeTask.SUBTASK, "Пол",
+                "моем", 2, 1,  Status.NEW));
+        manager.addSubtask(new Subtask(TypeTask.SUBTASK, "Пыль",
+                "протираем", 3, 1,  Status.NEW));
+        manager.getTaskById(0);
+        manager.getTaskById(1);
+        manager.getTaskById(2);
+        manager.getTaskById(3);
     }
 
     public static int printMenu() {
@@ -192,8 +208,9 @@ public class Main {
                 "8- обновление статусом\n" +
                 "9- Вывод всех эпиков\n" +
                 "10- Печать истории\n" +
-                "11- выход\n" +
-                "12 - новая");
+                "11- импорт из файла\n" +
+                "12- test\n" +
+                "13 - конец");
         return scanner.nextInt();
     }
 
@@ -231,22 +248,5 @@ public class Main {
                     + " description : " + sub.getDescription()
                     + " status : " + sub.getStatus());
         }
-    }
-
-    public static void q() {
-        Task task = new Task("приготовить ужин", "сходить в магазин", 0, Status.NEW);
-        Task task2 = new Task("принять ванную", "наюрать ванную", 1, Status.NEW);
-        Epic epic = new Epic("убраться", "123", 2, Status.NEW);
-        Subtask subtask = new Subtask("помыть пол", "набрать ведро", 3, 2, Status.NEW);
-        Subtask subtask1 = new Subtask("протереть пыль", "взять тряпку", 4, 2, Status.NEW);
-        fileBackedTasksManager.addTask(task);// так задача не добавляется, хотя все идет к тому же мотоду что и следующая строка
-        manager.addTask(task);//задача добавляется
-        printTask();
-
-        fileBackedTasksManager.addTask(task2);
-        fileBackedTasksManager.addEpic(epic);
-        manager.addSubtask(subtask);
-        manager.addSubtask(subtask1);
-        //FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager("D:/word.txt");
     }
 }
