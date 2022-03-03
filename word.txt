@@ -1,22 +1,5 @@
 id,type,Name,status,description,epic
 TASK,0,Погулять,NEW,Выйти из дома
-
-
-id,type,Name,status,description,epic
-TASK,0,Погулять,NEW,Выйти из дома
-EPIC,1,Уборка,NEW,генеральная
-
-
-id,type,Name,status,description,epic
-TASK,0,Погулять,NEW,Выйти из дома
-SUBTASK,2,Уборка,NEW,генеральная,1
-EPIC,1,Уборка,NEW,генеральная
-
-
-id,type,Name,status,description,epic
-TASK,0,Погулять,NEW,Выйти из дома
-SUBTASK,2,Уборка,NEW,генеральная,1
-SUBTASK,3,Уборка,NEW,генеральная,1
 EPIC,1,Уборка,NEW,генеральная
 
 

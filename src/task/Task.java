@@ -5,10 +5,9 @@ public class Task {
     private String description;
     private int id;
     private Status status;
-    private TypeTask typeTask;
+    private final TypeTask typeTask = TypeTask.TASK;
 
-    public Task(TypeTask typeTask, String title, String description, int id, Status status) {
-        this.typeTask = typeTask;
+    public Task(String title, String description, int id, Status status) {
         this.title = title;
         this.description = description;
         this.id = id;

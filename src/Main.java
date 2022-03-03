@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
-    private static final String fileName = "word.txt";
+    private static final String fileName = "D:/word.txt";
     private static final FileBackedTasksManager manager = new FileBackedTasksManager(fileName);
 
     public static void main(String[] args) {
@@ -67,16 +67,16 @@ public class Main {
         String title = scanner.next();
         String description = scanner.next();
         if (typeTask == 1) {
-            Epic epic = new Epic(TypeTask.EPIC, title, description, manager.getId(), Status.NEW);
+            Epic epic = new Epic(title, description, manager.getId(), Status.NEW);
             manager.addEpic(epic);
         } else if (typeTask == 2) {
             System.out.println("К какому эпику добавить сабтаск ?");
             printEpic();
             int epicId = scanner.nextInt();
-            Subtask subtask = new Subtask(TypeTask.SUBTASK, title, description, manager.getId(), epicId, Status.NEW);
+            Subtask subtask = new Subtask(title, description, manager.getId(), epicId, Status.NEW);
             manager.addSubtask(subtask);
         } else if (typeTask == 3) {
-            Task task = new Task(TypeTask.TASK, title, description, manager.getId(), Status.NEW);
+            Task task = new Task(title, description, manager.getId(), Status.NEW);
             manager.addTask(task);
         } else {
             System.out.println("Такой команды нет");
@@ -93,14 +93,14 @@ public class Main {
             if (!manager.getEpicTasks().get(idTask).getListSubtask().isEmpty()) {
                 List<Subtask> sub = manager.getEpicTasks().get(idTask).getListSubtask();
                 manager.getEpicTasks().remove(idTask);
-                Epic epic = new Epic(TypeTask.EPIC, title, description, idTask, Status.NEW);
+                Epic epic = new Epic(title, description, idTask, Status.NEW);
                 for (Subtask subs: sub) {
                     epic.addSubtaskInList(subs);
                 }
                 manager.updateTask(epic);
             } else {
                 manager.getEpicTasks().remove(idTask);
-                Epic epic = new Epic(TypeTask.EPIC, title, description, idTask, Status.NEW);
+                Epic epic = new Epic(title, description, idTask, Status.NEW);
                 manager.updateTask(epic);
             }
         } else if (manager.getSubtaskTasks().containsKey(idTask)) {
@@ -112,13 +112,13 @@ public class Main {
                 }
             }
             manager.getSubtaskTasks().remove(idTask);
-            Subtask subtask = new Subtask(TypeTask.SUBTASK, title, description, idTask, getEpic, Status.NEW);
+            Subtask subtask = new Subtask(title, description, idTask, getEpic, Status.NEW);
             manager.updateTask(subtask);
             manager.getEpicTasks().get(getEpic).addSubtaskInList(subtask);
         } else if (manager.getTasks().containsKey(idTask)) {
             printTask();
             manager.deleteTaskId(idTask);
-            Task tasks = new Task(TypeTask.TASK, title, description, idTask, Status.NEW);
+            Task tasks = new Task(title, description, idTask, Status.NEW);
             manager.updateTask(tasks);
         } else {
             System.out.println("Такого типа задачи нет");
@@ -164,7 +164,7 @@ public class Main {
             String description = manager.getSubtaskTasks().get(idSubtask).getDescription();
             int idEpic = manager.getSubtaskTasks().get(idSubtask).getEpicId();
             manager.deleteTaskId(idSubtask);
-            Subtask subtask = new Subtask(TypeTask.SUBTASK, title, description, idSubtask, idEpic, status);
+            Subtask subtask = new Subtask(title, description, idSubtask, idEpic, status);
             manager.addSubtask(subtask);
         } else if (typeTask == 2) {
             System.out.println("С каким идентификатором менять статус таск ?");
@@ -174,7 +174,7 @@ public class Main {
             String description = manager.getTasks().get(idTask).getDescription();
             int idTasks = manager.getTasks().get(idTask).getId();
             manager.deleteTaskId(idTask);
-            Task task = new Task(TypeTask.TASK, title, description, idTasks , status);
+            Task task = new Task(title, description, idTasks , status);
             manager.addTask(task);
         } else {
             System.out.println("Такой команды нет");
@@ -182,13 +182,13 @@ public class Main {
     }
 
     public static void test() {
-        manager.addTask(new Task(TypeTask.TASK, "Погулять",
+        manager.addTask(new Task("Погулять",
                 "Выйти из дома", 0,  Status.NEW));
-        manager.addEpic(new Epic(TypeTask.EPIC, "Уборка",
+        manager.addEpic(new Epic("Уборка",
                 "генеральная", 1,  Status.NEW));
-        manager.addSubtask(new Subtask(TypeTask.SUBTASK, "Пол",
+        manager.addSubtask(new Subtask("Пол",
                 "моем", 2, 1,  Status.NEW));
-        manager.addSubtask(new Subtask(TypeTask.SUBTASK, "Пыль",
+        manager.addSubtask(new Subtask("Пыль",
                 "протираем", 3, 1,  Status.NEW));
         manager.getTaskById(0);
         manager.getTaskById(1);

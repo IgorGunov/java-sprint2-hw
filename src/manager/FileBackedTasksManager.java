@@ -1,30 +1,17 @@
 package manager;
 
 import task.*;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class FileBackedTasksManager extends InMemoryTaskManager{
-    private static String file;
-    private static final TaskManager manager = Managers.getDefault();
+    private String file;
     public FileBackedTasksManager(String file) {
         this.file = file;
     }
 
-    public static void clearTheFile() {
-        try (FileWriter fwOb = new FileWriter(file, false);) {
-            PrintWriter pwOb = new PrintWriter(fwOb, false);
-            pwOb.flush();
-            pwOb.close();
-        } catch (IOException e) {
-            System.out.println("Ошибка при чистке файла");
-        }
-    }
-
     private void save () {
-        clearTheFile();
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("id,type,Name,status,description,epic\n");
 
@@ -71,17 +58,20 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
 
     private void fromString(String value) {
         String[] elementLine = value.split(",");
-        if (!value.equals("id,type,Name,status,description,epic") && !value.equals("") && elementLine.length > 3) {
+        char[] line = elementLine[0].toCharArray();
+        if (!value.equals("id,type,Name,status,description,epic") && !value.equals("") && line.length > 1) {
             if (TypeTask.TASK.toString().equals(elementLine[0])) {
-                manager.addTask(new Task(TypeTask.TASK, elementLine[2], elementLine[4],
-                Integer.parseInt(elementLine[1]), returnStatus(elementLine[3])));
-            } else if (TypeTask.EPIC.toString().equals(elementLine[0])) {
-                manager.addEpic(new Epic(TypeTask.EPIC, elementLine[2], elementLine[4],
+                addTask(new Task(elementLine[2], elementLine[4],
                 Integer.parseInt(elementLine[1]), returnStatus(elementLine[3])));
             } else if (TypeTask.SUBTASK.toString().equals(elementLine[0])) {
-                manager.addSubtask(new Subtask(TypeTask.SUBTASK, elementLine[2], elementLine[4],
+                Subtask subtask = new Subtask(elementLine[2], elementLine[4],
                 Integer.parseInt(elementLine[1]),
-                Integer.parseInt(elementLine[5]), returnStatus(elementLine[3])));
+                Integer.parseInt(elementLine[5]), returnStatus(elementLine[3]));
+                getEpicTasks().get(Integer.parseInt(elementLine[5])).addSubtaskInList(subtask);
+                addSubtask(subtask);
+            } else if (TypeTask.EPIC.toString().equals(elementLine[0])) {
+                addEpic(new Epic(elementLine[2], elementLine[4],
+                Integer.parseInt(elementLine[1]), returnStatus(elementLine[3])));
             }
         } else if (!value.equals("id,type,Name,status,description,epic") && !value.equals("")) {
             for (int i = 0; i < elementLine.length; i++) {
@@ -163,6 +153,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
             System.out.println("Невозможно прочитать файл с месячным отчётом. " +
                     "Возможно, файл не находится в нужной директории.");
             return null;
+        }
+    }
+
+    public class InputException extends RuntimeException {
+        public InputException(IOException cause) {
+            super(cause);
         }
     }
 }
