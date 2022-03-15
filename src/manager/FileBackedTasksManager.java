@@ -9,6 +9,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
     private String file;
     public FileBackedTasksManager(String file) {
         this.file = file;
+        loadFromFile();
     }
 
     private void save () {
@@ -44,7 +45,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
         try (FileWriter fileWriter = new FileWriter(file, true)) {
             fileWriter.write(String.valueOf(stringBuilder));
         } catch (IOException e) {
-            System.out.println("ошибка считывания");
+            throw new InputException(e);
         }
     }
 
@@ -61,21 +62,18 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
         char[] line = elementLine[0].toCharArray();
         if (!value.equals("id,type,Name,status,description,epic") && !value.equals("") && line.length > 1) {
             if (TypeTask.TASK.toString().equals(elementLine[0])) {
-                addTask(new Task(elementLine[2], elementLine[4],
-                Integer.parseInt(elementLine[1]), returnStatus(elementLine[3])));
+                super.addTask(new Task(elementLine[2], elementLine[4],
+                    Integer.parseInt(elementLine[1]), returnStatus(elementLine[3]), TypeTask.TASK));
             } else if (TypeTask.SUBTASK.toString().equals(elementLine[0])) {
-                Subtask subtask = new Subtask(elementLine[2], elementLine[4],
-                Integer.parseInt(elementLine[1]),
-                Integer.parseInt(elementLine[5]), returnStatus(elementLine[3]));
-                getEpicTasks().get(Integer.parseInt(elementLine[5])).addSubtaskInList(subtask);
-                addSubtask(subtask);
+                super.addSubtask(new Subtask(elementLine[2], elementLine[4], Integer.parseInt(elementLine[1]),
+                    Integer.parseInt(elementLine[5]), returnStatus(elementLine[3])));
             } else if (TypeTask.EPIC.toString().equals(elementLine[0])) {
-                addEpic(new Epic(elementLine[2], elementLine[4],
-                Integer.parseInt(elementLine[1]), returnStatus(elementLine[3])));
+                super.addEpic(new Epic(elementLine[2], elementLine[4],
+                    Integer.parseInt(elementLine[1]), returnStatus(elementLine[3])));
             }
         } else if (!value.equals("id,type,Name,status,description,epic") && !value.equals("")) {
             for (int i = 0; i < elementLine.length; i++) {
-                getTaskById(Integer.parseInt(elementLine[i]));
+                super.getTaskById(Integer.parseInt(elementLine[i]));
             }
         }
     }

@@ -4,6 +4,7 @@ import manager.Managers;
 import manager.TaskManager;
 import task.*;
 
+import java.awt.desktop.ScreenSleepEvent;
 import java.io.File;
 import java.util.List;
 import java.util.Scanner;
@@ -76,7 +77,7 @@ public class Main {
             Subtask subtask = new Subtask(title, description, manager.getId(), epicId, Status.NEW);
             manager.addSubtask(subtask);
         } else if (typeTask == 3) {
-            Task task = new Task(title, description, manager.getId(), Status.NEW);
+            Task task = new Task(title, description, manager.getId(), Status.NEW, TypeTask.TASK);
             manager.addTask(task);
         } else {
             System.out.println("Такой команды нет");
@@ -118,7 +119,7 @@ public class Main {
         } else if (manager.getTasks().containsKey(idTask)) {
             printTask();
             manager.deleteTaskId(idTask);
-            Task tasks = new Task(title, description, idTask, Status.NEW);
+            Task tasks = new Task(title, description, idTask, Status.NEW, TypeTask.TASK);
             manager.updateTask(tasks);
         } else {
             System.out.println("Такого типа задачи нет");
@@ -174,7 +175,7 @@ public class Main {
             String description = manager.getTasks().get(idTask).getDescription();
             int idTasks = manager.getTasks().get(idTask).getId();
             manager.deleteTaskId(idTask);
-            Task task = new Task(title, description, idTasks , status);
+            Task task = new Task(title, description, idTasks , status, TypeTask.TASK);
             manager.addTask(task);
         } else {
             System.out.println("Такой команды нет");
@@ -183,7 +184,7 @@ public class Main {
 
     public static void test() {
         manager.addTask(new Task("Погулять",
-                "Выйти из дома", 0,  Status.NEW));
+                "Выйти из дома", 0,  Status.NEW, TypeTask.TASK));
         manager.addEpic(new Epic("Уборка",
                 "генеральная", 1,  Status.NEW));
         manager.addSubtask(new Subtask("Пол",
@@ -194,6 +195,13 @@ public class Main {
         manager.getTaskById(1);
         manager.getTaskById(2);
         manager.getTaskById(3);
+        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(fileName);
+        System.out.println("Если : ");
+        System.out.println(fileBackedTasksManager.getHistory() +  " = \n" + manager.getHistory() + "\n");
+        System.out.println(fileBackedTasksManager.getSubtaskTasks() +  " = \n" + manager.getSubtaskTasks() + "\n");
+        System.out.println(fileBackedTasksManager.getTasks() +  " = \n" + manager.getTasks() + "\n");
+        System.out.println(fileBackedTasksManager.getEpicTasks() +  " = \n" + manager.getEpicTasks() + "\n");
+        System.out.println("все восстановилось верно");
     }
 
     public static int printMenu() {

@@ -4,14 +4,15 @@ public class Task {
     private String title;
     private String description;
     private int id;
-    private Status status;
-    private final TypeTask typeTask = TypeTask.TASK;
+    private final Status status;
+    private final TypeTask typeTask;
 
-    public Task(String title, String description, int id, Status status) {
+    public Task(String title, String description, int id, Status status, TypeTask typeTask) {
         this.title = title;
         this.description = description;
         this.id = id;
         this.status = status;
+        this.typeTask = typeTask;
     }
 
     public String toString() {
