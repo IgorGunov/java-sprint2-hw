@@ -33,11 +33,7 @@ public class Main {
                 for (Task task: manager.getHistory()) {
                     System.out.println(task.getId());
                 }
-            } else if (number == 11) {
-                manager.loadFromFile();
-            } else if (number == 12) {
-                test();
-            }  else if (number == 13) {
+            }  else if (number == 11) {
                 break;
             }else System.out.println("Такой команды нет");
         }
@@ -176,28 +172,6 @@ public class Main {
         }
     }
 
-    public static void test() {
-        manager.addTask(new Task("Погулять",
-                "Выйти из дома", 0,  Status.NEW, TypeTask.TASK));
-        manager.addEpic(new Epic("Уборка",
-                "генеральная", 1,  Status.NEW));
-        manager.addSubtask(new Subtask("Пол",
-                "моем", 2, 1,  Status.NEW));
-        manager.addSubtask(new Subtask("Пыль",
-                "протираем", 3, 1,  Status.NEW));
-        manager.getTaskById(0);
-        manager.getTaskById(1);
-        manager.getTaskById(2);
-        manager.getTaskById(3);
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(fileName);
-        System.out.println("Если : ");
-        System.out.println(fileBackedTasksManager.getHistory() +  " = \n" + manager.getHistory() + "\n");
-        System.out.println(fileBackedTasksManager.getSubtaskTasks() +  " = \n" + manager.getSubtaskTasks() + "\n");
-        System.out.println(fileBackedTasksManager.getTasks() +  " = \n" + manager.getTasks() + "\n");
-        System.out.println(fileBackedTasksManager.getEpicTasks() +  " = \n" + manager.getEpicTasks() + "\n");
-        System.out.println("все восстановилось верно");
-    }
-
     public static int printMenu() {
         System.out.println("Что вы хотите сделать ?\n" +
                 "1- получения списка всех задач\n" +
@@ -210,9 +184,7 @@ public class Main {
                 "8- обновление статусом\n" +
                 "9- Вывод всех эпиков\n" +
                 "10- Печать истории\n" +
-                "11- импорт из файла\n" +
-                "12- test\n" +
-                "13 - конец");
+                "11 - конец");
         return scanner.nextInt();
     }
 

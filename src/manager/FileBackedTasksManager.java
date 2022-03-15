@@ -7,6 +7,7 @@ import java.nio.file.Path;
 
 public class FileBackedTasksManager extends InMemoryTaskManager{
     private String file;
+    private static final String fileName = "D:/word.txt";
     public FileBackedTasksManager(String file) {
         this.file = file;
         loadFromFile();
@@ -45,7 +46,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
         try (FileWriter fileWriter = new FileWriter(file, true)) {
             fileWriter.write(String.valueOf(stringBuilder));
         } catch (IOException e) {
-            throw new InputException(e);
+            throw new ManagerSaveException(e);
         }
     }
 
@@ -154,9 +155,32 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
         }
     }
 
-    public class InputException extends RuntimeException {
-        public InputException(IOException cause) {
+    public class ManagerSaveException extends RuntimeException {
+        public ManagerSaveException(IOException cause) {
             super(cause);
         }
+    }
+
+    public static void main(String[] args) {
+        FileBackedTasksManager manager = new FileBackedTasksManager(fileName);
+        manager.addTask(new Task("Погулять",
+                "Выйти из дома", 0, Status.NEW, TypeTask.TASK));
+        manager.addEpic(new Epic("Уборка",
+                "генеральная", 1, Status.NEW));
+        manager.addSubtask(new Subtask("Пол",
+                "моем", 2, 1, Status.NEW));
+        manager.addSubtask(new Subtask("Пыль",
+                "протираем", 3, 1, Status.NEW));
+        manager.getTaskById(0);
+        manager.getTaskById(1);
+        manager.getTaskById(2);
+        manager.getTaskById(3);
+        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(fileName);
+        System.out.println("Если : ");
+        System.out.println(fileBackedTasksManager.getHistory() + " = \n" + manager.getHistory() + "\n");
+        System.out.println(fileBackedTasksManager.getSubtaskTasks() + " = \n" + manager.getSubtaskTasks() + "\n");
+        System.out.println(fileBackedTasksManager.getTasks() + " = \n" + manager.getTasks() + "\n");
+        System.out.println(fileBackedTasksManager.getEpicTasks() + " = \n" + manager.getEpicTasks() + "\n");
+        System.out.println("все восстановилось верно");
     }
 }
