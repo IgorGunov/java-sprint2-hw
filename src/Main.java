@@ -1,5 +1,9 @@
 import manager.FileBackedTasksManager;
 import task.*;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
@@ -7,6 +11,7 @@ public class Main {
     private static final Scanner scanner = new Scanner(System.in);
     private static final String fileName = "D:/word.txt";
     private static final FileBackedTasksManager manager = new FileBackedTasksManager(fileName);
+    private static final DateTimeFormatter formatt = DateTimeFormatter.ofPattern("dd.MM.yyyy,HH:mm");
 
     public static void main(String[] args) {
         while (true) {
@@ -34,6 +39,8 @@ public class Main {
                     System.out.println(task.getId());
                 }
             }  else if (number == 11) {
+                manager.getPrioritizedTasks();
+            }  else if (number == 12) {
                 break;
             }else System.out.println("Такой команды нет");
         }
@@ -57,17 +64,23 @@ public class Main {
         System.out.println("Введите название, описание через enter");
         String title = scanner.next();
         String description = scanner.next();
+        System.out.println("В какое время вы хотите начать? Введите в формате: dd.MM.yyyy,HH:mm");
+        String time = scanner.next();
+        LocalDateTime startTime = LocalDateTime.parse(time, formatt);
+        System.out.println("Сколько времени понадобится чтобы решить эту задачу в секундах?");
+        Integer timeSec = scanner.nextInt();
+        Duration duration = Duration.between(startTime, startTime.plusSeconds(timeSec));
         if (typeTask == 1) {
-            Epic epic = new Epic(title, description, manager.getId(), Status.NEW);
+            Epic epic = new Epic(title, description, manager.getId());
             manager.addEpic(epic);
         } else if (typeTask == 2) {
             System.out.println("К какому эпику добавить сабтаск ?");
             printEpic();
             int epicId = scanner.nextInt();
-            Subtask subtask = new Subtask(title, description, manager.getId(), epicId, Status.NEW);
+            Subtask subtask = new Subtask(title, description, manager.getId(), epicId, Status.NEW, duration, startTime);
             manager.addSubtask(subtask);
         } else if (typeTask == 3) {
-            Task task = new Task(title, description, manager.getId(), Status.NEW, TypeTask.TASK);
+            Task task = new Task(title, description, manager.getId(), Status.NEW, TypeTask.TASK, duration, startTime);
             manager.addTask(task);
         } else {
             System.out.println("Такой команды нет");
@@ -80,18 +93,24 @@ public class Main {
         System.out.println("Введите название, описание через enter");
         String title = scanner.next();
         String description = scanner.next();
+        System.out.println("В какое время вы хотите начать? Введите в формате: dd.MM.yyyy,HH:mm");
+        String time = scanner.nextLine();
+        LocalDateTime startTime = LocalDateTime.parse(time, formatt);
+        System.out.println("Сколько времени понадобится чтобы решить эту задачу в секундах?");
+        Integer timeSec = scanner.nextInt();
+        Duration duration = Duration.between(startTime, startTime.plusSeconds(timeSec));
         if (manager.getEpicTasks().containsKey(idTask)) {
             if (!manager.getEpicTasks().get(idTask).getListSubtask().isEmpty()) {
                 List<Subtask> sub = manager.getEpicTasks().get(idTask).getListSubtask();
                 manager.getEpicTasks().remove(idTask);
-                Epic epic = new Epic(title, description, idTask, Status.NEW);
+                Epic epic = new Epic(title, description, idTask);
                 for (Subtask subs: sub) {
                     epic.addSubtaskInList(subs);
                 }
                 manager.updateTask(epic);
             } else {
                 manager.getEpicTasks().remove(idTask);
-                Epic epic = new Epic(title, description, idTask, Status.NEW);
+                Epic epic = new Epic(title, description, idTask);
                 manager.updateTask(epic);
             }
         } else if (manager.getSubtaskTasks().containsKey(idTask)) {
@@ -103,13 +122,13 @@ public class Main {
                 }
             }
             manager.getSubtaskTasks().remove(idTask);
-            Subtask subtask = new Subtask(title, description, idTask, getEpic, Status.NEW);
+            Subtask subtask = new Subtask(title, description, idTask, getEpic, Status.NEW, duration, startTime);
             manager.updateTask(subtask);
             manager.getEpicTasks().get(getEpic).addSubtaskInList(subtask);
         } else if (manager.getTasks().containsKey(idTask)) {
             printTask();
             manager.deleteTaskId(idTask);
-            Task tasks = new Task(title, description, idTask, Status.NEW, TypeTask.TASK);
+            Task tasks = new Task(title, description, idTask, Status.NEW, TypeTask.TASK, duration, startTime);
             manager.updateTask(tasks);
         } else {
             System.out.println("Такого типа задачи нет");
@@ -154,8 +173,10 @@ public class Main {
             String title = manager.getSubtaskTasks().get(idSubtask).getTitle();
             String description = manager.getSubtaskTasks().get(idSubtask).getDescription();
             int idEpic = manager.getSubtaskTasks().get(idSubtask).getEpicId();
+            Duration duration = manager.getSubtaskTasks().get(idSubtask).getDuration();
+            LocalDateTime startTime = manager.getSubtaskTasks().get(idSubtask).getStartTime();
             manager.deleteTaskId(idSubtask);
-            Subtask subtask = new Subtask(title, description, idSubtask, idEpic, status);
+            Subtask subtask = new Subtask(title, description, idSubtask, idEpic, status, duration, startTime);
             manager.addSubtask(subtask);
         } else if (typeTask == 2) {
             System.out.println("С каким идентификатором менять статус таск ?");
@@ -164,8 +185,10 @@ public class Main {
             String title = manager.getTasks().get(idTask).getTitle();
             String description = manager.getTasks().get(idTask).getDescription();
             int idTasks = manager.getTasks().get(idTask).getId();
+            Duration duration = manager.getTasks().get(idTask).getDuration();
+            LocalDateTime startTime = manager.getTasks().get(idTask).getStartTime();
             manager.deleteTaskId(idTask);
-            Task task = new Task(title, description, idTasks , status, TypeTask.TASK);
+            Task task = new Task(title, description, idTasks , status, TypeTask.TASK, duration, startTime);
             manager.addTask(task);
         } else {
             System.out.println("Такой команды нет");
@@ -184,16 +207,20 @@ public class Main {
                 "8- обновление статусом\n" +
                 "9- Вывод всех эпиков\n" +
                 "10- Печать истории\n" +
-                "11 - конец");
+                "11- Вывести список задач в порядке приоритета\n" +
+                "12 - конец");
         return scanner.nextInt();
     }
 
     public static void printTask() {
-        for (Integer idTask : manager.getTasks().keySet()) {
-            System.out.println("ID : " + manager.getTasks().get(idTask).getId()
-                    + " title : " + manager.getTasks().get(idTask).getTitle()
-                    + " description : " + manager.getTasks().get(idTask).getDescription()
-                    + " status : " + manager.getTasks().get(idTask).getStatus());
+        for (Task task: manager.getTasks().values()) {
+            System.out.println("ID : " + task.getId()
+                    + " title : " + task.getTitle()
+                    + " description : " + task.getDescription()
+                    + " status : " + task.getStatus()
+                    + " startTime : " + task.getStartTime()
+                    + " GetEndTime : " + task.getGetEndTime());
+
         }
     }
 
@@ -202,16 +229,20 @@ public class Main {
             System.out.println("ID : " + epic.getId()
                     + " title : " + epic.getTitle()
                     + " description : " + epic.getDescription()
-                    + " status : " + epic.getStatus());
+                    + " status : " + epic.getStatus()
+                    + " startTime : " + epic.getStartTime()
+                    + " getEndTime : " + epic.getGetEndTime());
         }
     }
 
     public static void printSubtask() {
-        for (Integer idSubtask : manager.getSubtaskTasks().keySet()) {
-            System.out.println("ID : " + manager.getSubtaskTasks().get(idSubtask).getId()
-                    + " title : " + manager.getSubtaskTasks().get(idSubtask).getTitle()
-                    + " description : " + manager.getSubtaskTasks().get(idSubtask).getDescription()
-                    + " status : " + manager.getSubtaskTasks().get(idSubtask).getStatus());
+        for (Subtask subtask : manager.getSubtaskTasks().values()) {
+            System.out.println("ID : " + subtask.getId()
+                    + " title : " + subtask.getTitle()
+                    + " description : " + subtask.getDescription()
+                    + " status : " + subtask.getStatus()
+                    + " startTime : " + subtask.getStartTime()
+                    + " getEndTime : " + subtask.getGetEndTime());
         }
     }
 
@@ -220,7 +251,9 @@ public class Main {
             System.out.println("ID : " + sub.getId()
                     + " title : " + sub.getTitle()
                     + " description : " + sub.getDescription()
-                    + " status : " + sub.getStatus());
+                    + " status : " + sub.getStatus()
+                    + " startTime : " + sub.getStartTime()
+                    + " getEndTime : " + sub.getGetEndTime());
         }
     }
 }

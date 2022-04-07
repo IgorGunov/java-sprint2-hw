@@ -3,8 +3,11 @@ package manager;
 import task.Epic;
 import task.Subtask;
 import task.Task;
+
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeSet;
 
 public class InMemoryTaskManager implements TaskManager {
     private int id = 0;
@@ -12,6 +15,34 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Subtask> subtaskTask = new HashMap<>();
     private final HashMap<Integer, Epic> epicTask = new HashMap<>();
     private final HistoryManager history = Managers.getDefaultHistory();
+    Comparator<Task> comparator = (task1, task2) -> task1.getStartTime().compareTo(task2.getStartTime());
+    private TreeSet<Task> list = new TreeSet<>(comparator);
+
+    public void addTaskInList(Task task) {
+        if (checkPriority(task)) {
+            list.add(task);
+        } else {
+            System.out.println("Время задачи пересекается с уже имеющимися");
+        }
+    }
+
+    public boolean checkPriority(Task task) {
+        int count = 0;
+        for (Task task1: list) {
+            if (task1.getStartTime().isBefore(task.getStartTime()) &&
+                    task1.getGetEndTime().isBefore(task.getGetEndTime()) ||
+                    (task1.getStartTime().isAfter(task.getStartTime()) &&
+                            task1.getGetEndTime().isAfter(task.getGetEndTime()))) {
+            } else {
+                count ++ ;
+            }
+        }
+        if (count == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     @Override
     public HashMap<Integer, Task> getTasks() {
@@ -37,7 +68,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task getTaskById(int numberId){
+    public Task getTaskById(int numberId) {
         if (task.containsKey(numberId)) {
             history.add(task.get(numberId));
             return task.get(numberId);
@@ -56,6 +87,7 @@ public class InMemoryTaskManager implements TaskManager {
             subtaskTask.put(subtask.getId(), subtask);
             epicTask.get(subtask.getEpicId()).addSubtaskInList(subtask);
         }
+        addTaskInList(subtask);
     }
 
     @Override
@@ -81,11 +113,13 @@ public class InMemoryTaskManager implements TaskManager {
                 }
             }
         }
+        addTaskInList(epic);
     }
 
     @Override
     public void addTask(Task tasks) {
         task.put(tasks.getId(), tasks);
+        addTaskInList(tasks);
     }
 
     @Override
@@ -141,5 +175,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> getHistory() {
         return history.getHistory();
+    }
+
+    public TreeSet<Task> getPrioritizedTasks() {
+        return list;
     }
 }

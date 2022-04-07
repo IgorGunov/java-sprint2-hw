@@ -4,18 +4,22 @@ import task.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class FileBackedTasksManager extends InMemoryTaskManager{
     private String file;
-    private static final String fileName = "D:/word.txt";
+    private static final DateTimeFormatter formatt = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm");
+
     public FileBackedTasksManager(String file) {
         this.file = file;
-        loadFromFile();
+        //loadFromFile();
     }
 
     private void save () {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("id,type,Name,status,description,epic\n");
+        stringBuilder.append("id,type,Name,status,description,epic,duration,startTime\n");
 
         for (Task task: getTasks().values()) {
             stringBuilder.append(task.toString());
@@ -61,18 +65,22 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
     private void fromString(String value) {
         String[] elementLine = value.split(",");
         char[] line = elementLine[0].toCharArray();
-        if (!value.equals("id,type,Name,status,description,epic") && !value.equals("") && line.length > 1) {
+        if (!value.equals("id,type,Name,status,description,epic,duration,startTime") && !value.equals("") && line.length > 1) {
             if (TypeTask.TASK.toString().equals(elementLine[0])) {
                 super.addTask(new Task(elementLine[2], elementLine[4],
-                    Integer.parseInt(elementLine[1]), returnStatus(elementLine[3]), TypeTask.TASK));
+                    Integer.parseInt(elementLine[1]), returnStatus(elementLine[3]), TypeTask.TASK,
+                    Duration.between(LocalDateTime.MIN, LocalDateTime.MIN.plusSeconds(Integer.parseInt(elementLine[5]))),
+                    LocalDateTime.parse(elementLine[6])));
             } else if (TypeTask.SUBTASK.toString().equals(elementLine[0])) {
                 super.addSubtask(new Subtask(elementLine[2], elementLine[4], Integer.parseInt(elementLine[1]),
-                    Integer.parseInt(elementLine[5]), returnStatus(elementLine[3])));
+                    Integer.parseInt(elementLine[5]), returnStatus(elementLine[3]),
+                    Duration.between(LocalDateTime.MIN, LocalDateTime.MIN.plusSeconds(Integer.parseInt(elementLine[5]))),
+                    LocalDateTime.parse(elementLine[6])));
             } else if (TypeTask.EPIC.toString().equals(elementLine[0])) {
                 super.addEpic(new Epic(elementLine[2], elementLine[4],
-                    Integer.parseInt(elementLine[1]), returnStatus(elementLine[3])));
+                    Integer.parseInt(elementLine[1])));
             }
-        } else if (!value.equals("id,type,Name,status,description,epic") && !value.equals("")) {
+        } else if (!value.equals("id,type,Name,status,description,epic,duration,startTime") && !value.equals("")) {
             for (int i = 0; i < elementLine.length; i++) {
                 super.getTaskById(Integer.parseInt(elementLine[i]));
             }
@@ -123,19 +131,19 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
     @Override
     public void deleteAllEpic() {
         super.deleteAllEpic();
-        save();
+        //save();
     }
 
     @Override
     public void deleteAllSubtask() {
         super.deleteAllSubtask();
-        save();
+        //save();
     }
 
     @Override
     public void deleteAllTask() {
         super.deleteAllTask();
-        save();
+        //save();
     }
 
     @Override
@@ -159,28 +167,5 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
         public ManagerSaveException(IOException cause) {
             super(cause);
         }
-    }
-
-    public static void main(String[] args) {
-        FileBackedTasksManager manager = new FileBackedTasksManager(fileName);
-        manager.addTask(new Task("Погулять",
-                "Выйти из дома", 0, Status.NEW, TypeTask.TASK));
-        manager.addEpic(new Epic("Уборка",
-                "генеральная", 1, Status.NEW));
-        manager.addSubtask(new Subtask("Пол",
-                "моем", 2, 1, Status.NEW));
-        manager.addSubtask(new Subtask("Пыль",
-                "протираем", 3, 1, Status.NEW));
-        manager.getTaskById(0);
-        manager.getTaskById(1);
-        manager.getTaskById(2);
-        manager.getTaskById(3);
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager(fileName);
-        System.out.println("Если : ");
-        System.out.println(fileBackedTasksManager.getHistory() + " = \n" + manager.getHistory() + "\n");
-        System.out.println(fileBackedTasksManager.getSubtaskTasks() + " = \n" + manager.getSubtaskTasks() + "\n");
-        System.out.println(fileBackedTasksManager.getTasks() + " = \n" + manager.getTasks() + "\n");
-        System.out.println(fileBackedTasksManager.getEpicTasks() + " = \n" + manager.getEpicTasks() + "\n");
-        System.out.println("все восстановилось верно");
     }
 }
