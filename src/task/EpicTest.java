@@ -7,14 +7,16 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class EpicTest {
-    LocalDateTime startTime = LocalDateTime.MIN;
-    Duration duration = Duration.between(startTime, startTime.plusSeconds(10));
+    private final LocalDateTime startTime = LocalDateTime.MIN;
+    private final Duration duration = Duration.between(startTime, startTime.plusSeconds(10));
     private static final InMemoryTaskManager manager = new InMemoryTaskManager();
 
     @Test
     public void shouldEpicEmptyList() {
         Epic epic = new Epic("qwe", "qwerty", 0);
+        manager.addEpic(epic);
         Assertions.assertEquals(epic.getStatus(), Status.NEW);
+        Assertions.assertEquals(manager.getEpicTasks().get(0), Status.NEW);
     }
 
     @Test

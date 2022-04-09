@@ -6,15 +6,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class FileBackedTasksManager extends InMemoryTaskManager{
     private String file;
-    private static final DateTimeFormatter formatt = DateTimeFormatter.ofPattern("dd.MM.yyyy, HH:mm");
 
     public FileBackedTasksManager(String file) {
         this.file = file;
-        //loadFromFile();
     }
 
     private void save () {

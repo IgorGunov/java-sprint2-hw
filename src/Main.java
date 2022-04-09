@@ -1,6 +1,5 @@
 import manager.FileBackedTasksManager;
 import task.*;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -9,9 +8,9 @@ import java.util.Scanner;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
-    private static final String fileName = "D:/word.txt";
+    private static final String fileName = "word.txt";
     private static final FileBackedTasksManager manager = new FileBackedTasksManager(fileName);
-    private static final DateTimeFormatter formatt = DateTimeFormatter.ofPattern("dd.MM.yyyy,HH:mm");
+    private static final DateTimeFormatter format = DateTimeFormatter.ofPattern("dd.MM.yyyy,HH:mm");
 
     public static void main(String[] args) {
         while (true) {
@@ -66,7 +65,7 @@ public class Main {
         String description = scanner.next();
         System.out.println("В какое время вы хотите начать? Введите в формате: dd.MM.yyyy,HH:mm");
         String time = scanner.next();
-        LocalDateTime startTime = LocalDateTime.parse(time, formatt);
+        LocalDateTime startTime = LocalDateTime.parse(time, format);
         System.out.println("Сколько времени понадобится чтобы решить эту задачу в секундах?");
         Integer timeSec = scanner.nextInt();
         Duration duration = Duration.between(startTime, startTime.plusSeconds(timeSec));
@@ -95,7 +94,7 @@ public class Main {
         String description = scanner.next();
         System.out.println("В какое время вы хотите начать? Введите в формате: dd.MM.yyyy,HH:mm");
         String time = scanner.nextLine();
-        LocalDateTime startTime = LocalDateTime.parse(time, formatt);
+        LocalDateTime startTime = LocalDateTime.parse(time, format);
         System.out.println("Сколько времени понадобится чтобы решить эту задачу в секундах?");
         Integer timeSec = scanner.nextInt();
         Duration duration = Duration.between(startTime, startTime.plusSeconds(timeSec));
@@ -219,7 +218,7 @@ public class Main {
                     + " description : " + task.getDescription()
                     + " status : " + task.getStatus()
                     + " startTime : " + task.getStartTime()
-                    + " GetEndTime : " + task.getGetEndTime());
+                    + " GetEndTime : " + task.getEndTime());
 
         }
     }
@@ -231,7 +230,7 @@ public class Main {
                     + " description : " + epic.getDescription()
                     + " status : " + epic.getStatus()
                     + " startTime : " + epic.getStartTime()
-                    + " getEndTime : " + epic.getGetEndTime());
+                    + " getEndTime : " + epic.getEndTime());
         }
     }
 
@@ -242,7 +241,7 @@ public class Main {
                     + " description : " + subtask.getDescription()
                     + " status : " + subtask.getStatus()
                     + " startTime : " + subtask.getStartTime()
-                    + " getEndTime : " + subtask.getGetEndTime());
+                    + " getEndTime : " + subtask.getEndTime());
         }
     }
 
@@ -253,7 +252,7 @@ public class Main {
                     + " description : " + sub.getDescription()
                     + " status : " + sub.getStatus()
                     + " startTime : " + sub.getStartTime()
-                    + " getEndTime : " + sub.getGetEndTime());
+                    + " getEndTime : " + sub.getEndTime());
         }
     }
 }

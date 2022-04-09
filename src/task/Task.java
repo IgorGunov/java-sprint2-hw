@@ -11,7 +11,7 @@ public class Task {
     private final TypeTask typeTask;
     private Duration duration;
     private LocalDateTime startTime;
-    private LocalDateTime getEndTime;
+    private LocalDateTime endTime;
 
     public Task(String title, String description, int id, Status status, TypeTask typeTask,
                 Duration duration, LocalDateTime startTime) {
@@ -22,7 +22,7 @@ public class Task {
         this.typeTask = typeTask;
         this.duration = duration;
         this.startTime = startTime;
-        getEndTime = startTime.plus(duration);
+        endTime = startTime.plus(duration);
     }
 
     public Duration getDuration() {
@@ -33,8 +33,8 @@ public class Task {
         return startTime;
     }
 
-    public LocalDateTime getGetEndTime() {
-        return getEndTime;
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
 
     public String toString() {

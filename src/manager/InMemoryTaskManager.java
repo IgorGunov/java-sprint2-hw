@@ -3,8 +3,6 @@ package manager;
 import task.Epic;
 import task.Subtask;
 import task.Task;
-
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
@@ -15,8 +13,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Subtask> subtaskTask = new HashMap<>();
     private final HashMap<Integer, Epic> epicTask = new HashMap<>();
     private final HistoryManager history = Managers.getDefaultHistory();
-    Comparator<Task> comparator = (task1, task2) -> task1.getStartTime().compareTo(task2.getStartTime());
-    private TreeSet<Task> list = new TreeSet<>(comparator);
+    private TreeSet<Task> list = new TreeSet<>((task1, task2) -> task1.getStartTime().compareTo(task2.getStartTime()));
 
     public void addTaskInList(Task task) {
         if (checkPriority(task)) {
@@ -30,9 +27,9 @@ public class InMemoryTaskManager implements TaskManager {
         int count = 0;
         for (Task task1: list) {
             if (task1.getStartTime().isBefore(task.getStartTime()) &&
-                    task1.getGetEndTime().isBefore(task.getGetEndTime()) ||
+                    task1.getEndTime().isBefore(task.getEndTime()) ||
                     (task1.getStartTime().isAfter(task.getStartTime()) &&
-                            task1.getGetEndTime().isAfter(task.getGetEndTime()))) {
+                            task1.getEndTime().isAfter(task.getEndTime()))) {
             } else {
                 count ++ ;
             }

@@ -6,27 +6,48 @@ import task.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-class InMemoryTaskManagerTest {
+class TaskManagerTest {
 
+    private final FileBackedTasksManager fileManager = new FileBackedTasksManager("word.txt");
     private final LocalDateTime startTime = LocalDateTime.MIN;
     private final Duration duration = Duration.between(startTime, startTime.plusSeconds(10));
-    InMemoryTaskManager managerInMemory = new InMemoryTaskManager();
-    HashMap list = new HashMap<>();
+    private final InMemoryTaskManager managerInMemory = new InMemoryTaskManager();
+
+    @Test
+    void shouldSubtaskHaveEpic() {
+        Subtask task = new Subtask("wevf", "werg", 0, 2, Status.NEW, duration, startTime);
+        Assertions.assertEquals(task.getEpicId(),2);
+    }
+
+    @Test
+    void add() {
+        fileManager.loadFromFile();
+        Assertions.assertEquals(fileManager.getTasks().size(),0);
+        Assertions.assertEquals(fileManager.getEpicTasks().size(),0);
+        Assertions.assertEquals(fileManager.getSubtaskTasks().size(),0);
+        Assertions.assertEquals(fileManager.getHistory().size(),0);
+        Epic epic = new Epic("qwe", "qwerty", 2);
+        Task task = new Task("wevf", "werg", 3, Status.NEW, TypeTask.TASK, duration, startTime);
+        fileManager.addEpic(epic);
+        fileManager.addTask(task);
+        fileManager.deleteAllTask();
+        fileManager.deleteAllEpic();
+        fileManager.loadFromFile();
+        Assertions.assertEquals(fileManager.getHistory().size(),0);
+        Assertions.assertEquals(fileManager.getTasks().size(),1);
+        Assertions.assertEquals(fileManager.getEpicTasks().size(),1);
+    }
 
     @Test
     void getTasks() {
-        Assertions.assertEquals(0, managerInMemory.getTasks().size());
         Task task = new Task("wevf", "werg", 0, Status.NEW, TypeTask.TASK, duration, startTime);
         Task task2 = new Task("wevffvf", "wersvg", 1, Status.IN_PROGRESS, TypeTask.TASK, duration, startTime);
         managerInMemory.addTask(task);
         managerInMemory.addTask(task2);
-        list.put(task.getId(), task);
-        list.put(task2.getId(), task2);
-        Assertions.assertEquals(list.get(0), managerInMemory.getTasks().get(0));
-        Assertions.assertEquals(list.get(1), managerInMemory.getTasks().get(1));
+        Assertions.assertEquals(task, managerInMemory.getTasks().get(0));
+        Assertions.assertEquals(task2, managerInMemory.getTasks().get(1));
     }
 
     @Test
@@ -38,10 +59,8 @@ class InMemoryTaskManagerTest {
         managerInMemory.addEpic(epic);
         managerInMemory.addSubtask(task);
         managerInMemory.addSubtask(task2);
-        list.put(task.getId(), task);
-        list.put(task2.getId(), task2);
-        Assertions.assertEquals(list.get(0), managerInMemory.getSubtaskTasks().get(0));
-        Assertions.assertEquals(list.get(1), managerInMemory.getSubtaskTasks().get(1));
+        Assertions.assertEquals(task, managerInMemory.getSubtaskTasks().get(0));
+        Assertions.assertEquals(task2, managerInMemory.getSubtaskTasks().get(1));
     }
 
     @Test
@@ -51,10 +70,8 @@ class InMemoryTaskManagerTest {
         Epic epic2 = new Epic("qwe", "qwerty", 1);
         managerInMemory.addEpic(epic);
         managerInMemory.addEpic(epic2);
-        list.put(epic.getId(), epic);
-        list.put(epic2.getId(), epic2);
-        Assertions.assertEquals(list.get(0), managerInMemory.getEpicTasks().get(0));
-        Assertions.assertEquals(list.get(1), managerInMemory.getEpicTasks().get(1));
+        Assertions.assertEquals(epic, managerInMemory.getEpicTasks().get(0));
+        Assertions.assertEquals(epic2, managerInMemory.getEpicTasks().get(1));
     }
 
     @Test
@@ -151,4 +168,5 @@ class InMemoryTaskManagerTest {
         history.add(epic);
         Assertions.assertEquals(history, managerInMemory.getHistory());
     }
+
 }
