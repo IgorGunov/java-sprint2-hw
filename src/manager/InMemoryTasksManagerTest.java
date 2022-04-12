@@ -8,12 +8,26 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-class TaskManagerTest {
+public class InMemoryTasksManagerTest {
 
-    private final FileBackedTasksManager fileManager = new FileBackedTasksManager("word.txt");
     private final LocalDateTime startTime = LocalDateTime.MIN;
     private final Duration duration = Duration.between(startTime, startTime.plusSeconds(10));
     private final InMemoryTaskManager managerInMemory = new InMemoryTaskManager();
+
+    @Test
+    void addTaskInList() {
+        Epic epic = new Epic("qwe", "qwerty", 2);
+        managerInMemory.addTaskInList(epic);
+        Assertions.assertEquals(managerInMemory.getPrioritizedTasks().size(),1);
+    }
+
+    @Test
+    void checkPriority() {
+        Task task = new Task("wevf", "werg", 0, Status.NEW, TypeTask.TASK, duration, startTime);
+        Task task2 = new Task("wevffvf", "wersvg", 1, Status.IN_PROGRESS, TypeTask.TASK, duration, startTime);
+        managerInMemory.addTaskInList(task);
+        Assertions.assertFalse(managerInMemory.checkPriority(task2));
+    }
 
     @Test
     void shouldSubtaskHaveEpic() {
@@ -21,24 +35,6 @@ class TaskManagerTest {
         Assertions.assertEquals(task.getEpicId(),2);
     }
 
-    @Test
-    void add() {
-        fileManager.loadFromFile();
-        Assertions.assertEquals(fileManager.getTasks().size(),0);
-        Assertions.assertEquals(fileManager.getEpicTasks().size(),0);
-        Assertions.assertEquals(fileManager.getSubtaskTasks().size(),0);
-        Assertions.assertEquals(fileManager.getHistory().size(),0);
-        Epic epic = new Epic("qwe", "qwerty", 2);
-        Task task = new Task("wevf", "werg", 3, Status.NEW, TypeTask.TASK, duration, startTime);
-        fileManager.addEpic(epic);
-        fileManager.addTask(task);
-        fileManager.deleteAllTask();
-        fileManager.deleteAllEpic();
-        fileManager.loadFromFile();
-        Assertions.assertEquals(fileManager.getHistory().size(),0);
-        Assertions.assertEquals(fileManager.getTasks().size(),1);
-        Assertions.assertEquals(fileManager.getEpicTasks().size(),1);
-    }
 
     @Test
     void getTasks() {
@@ -48,6 +44,7 @@ class TaskManagerTest {
         managerInMemory.addTask(task2);
         Assertions.assertEquals(task, managerInMemory.getTasks().get(0));
         Assertions.assertEquals(task2, managerInMemory.getTasks().get(1));
+        Assertions.assertEquals(managerInMemory.getTasks().size(),2);
     }
 
     @Test
@@ -61,6 +58,7 @@ class TaskManagerTest {
         managerInMemory.addSubtask(task2);
         Assertions.assertEquals(task, managerInMemory.getSubtaskTasks().get(0));
         Assertions.assertEquals(task2, managerInMemory.getSubtaskTasks().get(1));
+        Assertions.assertEquals(managerInMemory.getSubtaskTasks().size(),2);
     }
 
     @Test
@@ -72,6 +70,7 @@ class TaskManagerTest {
         managerInMemory.addEpic(epic2);
         Assertions.assertEquals(epic, managerInMemory.getEpicTasks().get(0));
         Assertions.assertEquals(epic2, managerInMemory.getEpicTasks().get(1));
+        Assertions.assertEquals(managerInMemory.getEpicTasks().size(),2);
     }
 
     @Test
@@ -91,11 +90,11 @@ class TaskManagerTest {
 
     @Test
     void addSubtask() {
-        Subtask task = new Subtask("wevf", "werg", 0, 2, Status.NEW, duration, startTime);
+        Subtask subtask = new Subtask("wevf", "werg", 0, 2, Status.NEW, duration, startTime);
         Epic epic = new Epic("qwe", "qwerty", 2);
         managerInMemory.addEpic(epic);
-        managerInMemory.addSubtask(task);
-        Assertions.assertEquals(managerInMemory.getSubtaskTasks().get(0), task);
+        managerInMemory.addSubtask(subtask);
+        Assertions.assertEquals(managerInMemory.getSubtaskTasks().get(0), subtask);
     }
 
     @Test
@@ -168,5 +167,4 @@ class TaskManagerTest {
         history.add(epic);
         Assertions.assertEquals(history, managerInMemory.getHistory());
     }
-
 }

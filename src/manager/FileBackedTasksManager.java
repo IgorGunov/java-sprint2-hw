@@ -53,10 +53,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
 
     public void loadFromFile() {
         String fileContents = readFileContentsOrNull(file);
-        String[] lines = fileContents.split("\\n");
-        for (String line: lines) {
-            fromString(line);
+        try {
+            String[] lines = fileContents.split("\\n");
+            for (String line : lines) {
+                fromString(line);
+            }
+        } catch (NullPointerException e) {
+            System.out.println("файл пуст");
         }
+
     }
 
     private void fromString(String value) {

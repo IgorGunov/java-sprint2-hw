@@ -7,7 +7,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 class InMemoryHistoryManagerTest {
-    InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
+    private final InMemoryHistoryManager historyManager = new InMemoryHistoryManager();
     private final LocalDateTime startTime = LocalDateTime.MIN;
     private final Duration duration = Duration.between(startTime, startTime.plusSeconds(10));
 
