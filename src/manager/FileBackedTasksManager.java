@@ -10,7 +10,8 @@ import java.time.LocalDateTime;
 public class FileBackedTasksManager extends InMemoryTaskManager{
     private String file;
 
-    public FileBackedTasksManager(String file) {
+    public FileBackedTasksManager(HistoryManager history, String file) {
+        super(history);
         this.file = file;
     }
 
@@ -61,7 +62,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
         } catch (NullPointerException e) {
             System.out.println("файл пуст");
         }
-
     }
 
     private void fromString(String value) {
@@ -76,8 +76,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
             } else if (TypeTask.SUBTASK.toString().equals(elementLine[0])) {
                 super.addSubtask(new Subtask(elementLine[2], elementLine[4], Integer.parseInt(elementLine[1]),
                     Integer.parseInt(elementLine[5]), returnStatus(elementLine[3]),
-                    Duration.between(LocalDateTime.MIN, LocalDateTime.MIN.plusSeconds(Integer.parseInt(elementLine[5]))),
-                    LocalDateTime.parse(elementLine[6])));
+                    Duration.between(LocalDateTime.MIN, LocalDateTime.MIN.plusSeconds(Integer.parseInt(elementLine[6]))),
+                    LocalDateTime.parse(elementLine[7])));
             } else if (TypeTask.EPIC.toString().equals(elementLine[0])) {
                 super.addEpic(new Epic(elementLine[2], elementLine[4],
                     Integer.parseInt(elementLine[1])));

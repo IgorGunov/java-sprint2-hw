@@ -1,6 +1,7 @@
 package task;
 
 import manager.InMemoryTaskManager;
+import manager.Managers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import java.time.Duration;
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 public class EpicTest {
     private final LocalDateTime startTime = LocalDateTime.MIN;
     private final Duration duration = Duration.between(startTime, startTime.plusSeconds(10));
-    private static final InMemoryTaskManager manager = new InMemoryTaskManager();
+    private static final InMemoryTaskManager manager = new InMemoryTaskManager(Managers.getDefaultHistory());
 
     @Test
     public void shouldEpicEmptyList() {

@@ -12,8 +12,12 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Task> task = new HashMap<>();
     private final HashMap<Integer, Subtask> subtaskTask = new HashMap<>();
     private final HashMap<Integer, Epic> epicTask = new HashMap<>();
-    private final HistoryManager history = Managers.getDefaultHistory();
+    private final HistoryManager history;
     private TreeSet<Task> list = new TreeSet<>((task1, task2) -> task1.getStartTime().compareTo(task2.getStartTime()));
+
+    public InMemoryTaskManager(HistoryManager manager) {
+        this.history = manager;
+    }
 
     public void addTaskInList(Task task) {
         if (checkPriority(task)) {
