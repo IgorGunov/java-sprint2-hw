@@ -27,6 +27,14 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+    public void removeTaskInList(Task task) {
+        if (checkPriority(task)) {
+            list.remove(task);
+        } else {
+            System.out.println("Такой задачи нет в списке");
+        }
+    }
+
     public boolean checkPriority(Task task) {
         int count = 0;
         for (Task task1: list) {

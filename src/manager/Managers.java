@@ -2,11 +2,11 @@ package manager;
 
 public class Managers {
 
-    public static TaskManager getDefaultTaskManager() {
+    public static InMemoryTaskManager getDefaultTaskManager() {
         return new InMemoryTaskManager(getDefaultHistory());
     }
 
-    public static TaskManager getDefaultFileBacked() {
+    public static FileBackedTasksManager getDefaultFileBacked() {
         return new FileBackedTasksManager(getDefaultHistory(),"word.txt");
     }
 

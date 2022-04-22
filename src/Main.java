@@ -1,6 +1,8 @@
 import manager.FileBackedTasksManager;
 import manager.Managers;
 import task.*;
+
+import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -13,7 +15,7 @@ public class Main {
     private static final FileBackedTasksManager manager = new FileBackedTasksManager(Managers.getDefaultHistory(),fileName);
     private static final DateTimeFormatter format = DateTimeFormatter.ofPattern("dd.MM.yyyy,HH:mm");
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         while (true) {
             int number = printMenu();
             if (number == 1) {
@@ -42,6 +44,8 @@ public class Main {
                 manager.getPrioritizedTasks();
             }  else if (number == 12) {
                 break;
+            }  else if (number == 13) {
+                HttpTaskServer.httpTaskServer();
             }else System.out.println("Такой команды нет");
         }
     }
@@ -208,6 +212,7 @@ public class Main {
                 "9- Вывод всех эпиков\n" +
                 "10- Печать истории\n" +
                 "11- Вывести список задач в порядке приоритета\n" +
+                "13- запуск сервера\n" +
                 "12 - конец");
         return scanner.nextInt();
     }

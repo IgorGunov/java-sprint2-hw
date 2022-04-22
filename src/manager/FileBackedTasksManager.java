@@ -64,7 +64,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager{
         }
     }
 
-    private void fromString(String value) {
+    public void fromString(String value) {
         String[] elementLine = value.split(",");
         char[] line = elementLine[0].toCharArray();
         if (!value.equals("id,type,Name,status,description,epic,duration,startTime") && !value.equals("") && line.length > 1) {
