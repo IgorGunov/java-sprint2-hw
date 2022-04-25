@@ -1,13 +1,11 @@
 package manager;
 
+import Http.HTTPTaskManager;
+
 public class Managers {
 
-    public static InMemoryTaskManager getDefaultTaskManager() {
-        return new InMemoryTaskManager(getDefaultHistory());
-    }
-
-    public static FileBackedTasksManager getDefaultFileBacked() {
-        return new FileBackedTasksManager(getDefaultHistory(),"word.txt");
+    public static HTTPTaskManager getDefaultTaskManager(){
+        return new HTTPTaskManager("http://localhost:8078");
     }
 
     public static HistoryManager getDefaultHistory() {

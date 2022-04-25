@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public class EpicTest {
     private final LocalDateTime startTime = LocalDateTime.MIN;
     private final Duration duration = Duration.between(startTime, startTime.plusSeconds(10));
-    private static final InMemoryTaskManager manager = new InMemoryTaskManager(Managers.getDefaultHistory());
+    private static final InMemoryTaskManager manager = new InMemoryTaskManager();
 
     @Test
     public void shouldEpicEmptyList() {

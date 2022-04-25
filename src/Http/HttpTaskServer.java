@@ -1,3 +1,5 @@
+package Http;
+
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -23,9 +25,7 @@ public class HttpTaskServer  {
     }
 }
 
-class ergv(HttpServer httpServer) implements 
-
-class TaskTask(HttpServer httpExchange) implements HttpHandler {
+class TaskTask implements HttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         TaskManager manager = Managers.getDefaultTaskManager();
@@ -48,7 +48,6 @@ class TaskTask(HttpServer httpExchange) implements HttpHandler {
                 if (query == null) {
                     manager.addTask(task);
                 } else {
-                    int id = Integer.parseInt(query.split("=")[1]);
                     manager.updateTask(task);
                 }
                 break;
@@ -65,12 +64,11 @@ class TaskTask(HttpServer httpExchange) implements HttpHandler {
         }
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write(line.getBytes());
-            os.close();
         }
     }
 }
 
-class TaskEpic(HttpServer httpExchange) implements HttpHandler {
+class TaskEpic implements HttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         TaskManager manager = Managers.getDefaultTaskManager();
@@ -92,7 +90,6 @@ class TaskEpic(HttpServer httpExchange) implements HttpHandler {
                 if (query == null) {
                     manager.addEpic(task);
                 } else {
-                    int id = Integer.parseInt(query.split("=")[1]);
                     manager.updateTask(task);
                 }
                 break;
@@ -109,12 +106,11 @@ class TaskEpic(HttpServer httpExchange) implements HttpHandler {
         }
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write(line.getBytes());
-            os.close();
         }
     }
 }
 
-class TaskSubtask(HttpServer httpExchange) implements HttpHandler {
+class TaskSubtask implements HttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         TaskManager manager = Managers.getDefaultTaskManager();
@@ -136,7 +132,6 @@ class TaskSubtask(HttpServer httpExchange) implements HttpHandler {
                 if (query == null) {
                     manager.addSubtask(task);
                 } else {
-                    int id = Integer.parseInt(query.split("=")[1]);
                     manager.updateTask(task);
                 }
                 break;
@@ -153,12 +148,11 @@ class TaskSubtask(HttpServer httpExchange) implements HttpHandler {
         }
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write(line.getBytes());
-            os.close();
         }
     }
 }
 
-class TaskPrioritiz(HttpServer httpExchange) implements HttpHandler {
+class TaskPrioritiz implements HttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         InMemoryTaskManager manager = Managers.getDefaultTaskManager();
@@ -182,12 +176,11 @@ class TaskPrioritiz(HttpServer httpExchange) implements HttpHandler {
         }
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write(line.getBytes());
-            os.close();
         }
     }
 }
 
-class TaskHistory(HttpServer httpExchange) implements HttpHandler {
+class TaskHistory implements HttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         HistoryManager manager = Managers.getDefaultHistory();
@@ -211,7 +204,6 @@ class TaskHistory(HttpServer httpExchange) implements HttpHandler {
         }
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write(line.getBytes());
-            os.close();
         }
     }
 }

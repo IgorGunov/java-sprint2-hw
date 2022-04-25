@@ -3,6 +3,8 @@ package manager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import task.*;
+
+import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,7 +17,7 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
     @BeforeEach
     @Override
     public void initializeManager() {
-        manager = new FileBackedTasksManager(Managers.getDefaultHistory(),"word.txt");
+        manager = new FileBackedTasksManager("http://localhost:8078/");
     }
 
     @Test

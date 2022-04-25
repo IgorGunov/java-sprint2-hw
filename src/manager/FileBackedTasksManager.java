@@ -2,6 +2,8 @@ package manager;
 
 import task.*;
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -10,12 +12,11 @@ import java.time.LocalDateTime;
 public class FileBackedTasksManager extends InMemoryTaskManager{
     private String file;
 
-    public FileBackedTasksManager(HistoryManager history, String file) {
-        super(history);
-        this.file = file;
+    public FileBackedTasksManager(String url) {
+        this.file = url;
     }
 
-    private void save () {
+    public void save () {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("id,type,Name,status,description,epic,duration,startTime\n");
 

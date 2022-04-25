@@ -18,7 +18,7 @@ public class InMemoryTasksManagerTest extends TaskManagerTest<InMemoryTaskManage
     @BeforeEach
     @Override
     public void initializeManager() {
-        manager = new InMemoryTaskManager(Managers.getDefaultHistory());
+        manager = new InMemoryTaskManager();
     }
 
     @Test
