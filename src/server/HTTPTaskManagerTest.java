@@ -17,18 +17,18 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
 
 class HTTPTaskManagerTest {
-    LocalDateTime startTime = LocalDateTime.MIN;
-    Duration duration = Duration.between(startTime, startTime.plusSeconds(10));
+    private final LocalDateTime startTime = LocalDateTime.MIN;
+    private final Duration duration = Duration.between(startTime, startTime.plusSeconds(10));
 
     Task task1 = new Task("wevf", "werg", 0, Status.NEW, TypeTask.TASK, duration, startTime);
     Task task2 = new Task("bfhe", "etty", 1, Status.NEW, TypeTask.TASK, duration, startTime);
     Subtask subtask1 = new Subtask("wevf", "werg", 2, 4, Status.NEW, duration, startTime);
     Subtask subtask2 = new Subtask("rtygg", "ekkoitr", 3, 4, Status.NEW, duration, startTime);
     Epic epic = new Epic("qwe", "qwerty", 4);
-    HTTPTaskManager manager = new HTTPTaskManager("http://localhost:8078/");
-    static KVTaskClient client;
-    static KVServer kvServer;
-    static Gson gson;
+    private final HTTPTaskManager manager = new HTTPTaskManager("http://localhost:8078/");
+    private static KVTaskClient client;
+    private static KVServer kvServer;
+    private static Gson gson;
 
     @BeforeAll
     public static void beforeAll(){
