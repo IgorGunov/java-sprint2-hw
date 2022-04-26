@@ -1,4 +1,4 @@
-package Http;
+package server;
 
 import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
@@ -14,7 +14,7 @@ import java.net.InetSocketAddress;
 
 public class HttpTaskServer  {
 
-    public static void httpTaskServer() throws IOException {
+    public void HttpTaskServer() throws IOException {
         HttpServer httpServer = HttpServer.create(new InetSocketAddress(8080), 0);
         httpServer.createContext("/tasks/task", new TaskTask());
         httpServer.createContext("/tasks/subtask", new TaskSubtask());
@@ -188,20 +188,7 @@ class TaskHistory implements HttpHandler {
         String body = new String(httpExchange.getRequestBody().readAllBytes());
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         Task task = gson.fromJson(body, Task.class);
-        String line = "";
-        switch (method) {
-            case "GET":
-                line = gson.toJson(manager.getHistory());
-                break;
-            case "POST":
-                manager.add(task);
-                break;
-            case "DELETE":
-                manager.removeTaskFromHistory(task);
-                break;
-            default:
-                line = "нет такого запроса";
-        }
+        String line = gson.toJson(manager.getHistory());
         try (OutputStream os = httpExchange.getResponseBody()) {
             os.write(line.getBytes());
         }

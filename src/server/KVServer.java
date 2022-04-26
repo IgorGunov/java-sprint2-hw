@@ -1,8 +1,7 @@
-package Http;
+package server;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
@@ -12,29 +11,36 @@ import java.util.Map;
  * Постман: https://www.getpostman.com/collections/a83b61d9e1c81c10575c
  */
 public class KVServer {
-    public static final int PORT = 8078;
-    private final String API_KEY;
-    private HttpServer server;
-    private Map<String, String> data = new HashMap<>();
+    public static final int port = 8078;
+    private final String api_key;
+    private final HttpServer server;
+    private final Map<String, String> data = new HashMap<>();
 
     public KVServer() throws IOException {
-        API_KEY = generateApiKey();
-        server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
+        api_key = generateApiKey();
+        server = HttpServer.create(new InetSocketAddress("localhost", port), 0);
+        register();
+        save();
+        load();
+    }
+
+    public void register() {
         server.createContext("/register", (h) -> {
             try {
                 System.out.println("\n/register");
-                switch (h.getRequestMethod()) {
-                    case "GET":
-                        sendText(h, API_KEY);
-                        break;
-                    default:
-                        System.out.println("/register ждёт GET-запрос, а получил " + h.getRequestMethod());
-                        h.sendResponseHeaders(405, 0);
+                if ("GET".equals(h.getRequestMethod())) {
+                    sendText(h, api_key);
+                } else {
+                    System.out.println("/register ждёт GET-запрос, а получил " + h.getRequestMethod());
+                    h.sendResponseHeaders(405, 0);
                 }
             } finally {
                 h.close();
             }
         });
+    }
+
+    public void save() {
         server.createContext("/save", (h) -> {
             try {
                 System.out.println("\n/save");
@@ -69,6 +75,9 @@ public class KVServer {
                 h.close();
             }
         });
+    }
+
+    public void load() {
         server.createContext("/load", (h) -> {
             try {
                 System.out.println("\n/load");
@@ -106,9 +115,9 @@ public class KVServer {
     }
 
     public void start() {
-        System.out.println("Запускаем сервер на порту " + PORT);
-        System.out.println("Открой в браузере http://localhost:" + PORT + "/");
-        System.out.println("API_KEY: " + API_KEY);
+        System.out.println("Запускаем сервер на порту " + port);
+        System.out.println("Открой в браузере http://localhost:" + port + "/");
+        System.out.println("API_KEY: " + api_key);
         server.start();
     }
 
@@ -118,7 +127,7 @@ public class KVServer {
 
     protected boolean hasAuth(HttpExchange h) {
         String rawQuery = h.getRequestURI().getRawQuery();
-        return rawQuery != null && (rawQuery.contains("API_KEY=" + API_KEY) || rawQuery.contains("API_KEY=DEBUG"));
+        return rawQuery != null && (rawQuery.contains("API_KEY=" + api_key) || rawQuery.contains("API_KEY=DEBUG"));
     }
 
     protected String readText(HttpExchange h) throws IOException {
@@ -126,7 +135,6 @@ public class KVServer {
     }
 
     protected void sendText(HttpExchange h, String text) throws IOException {
-        //byte[] resp = jackson.writeValueAsBytes(obj);
         byte[] resp = text.getBytes("UTF-8");
         h.getResponseHeaders().add("Content-Type", "application/json");
         h.sendResponseHeaders(200, resp.length);

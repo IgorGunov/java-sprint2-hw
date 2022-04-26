@@ -1,16 +1,11 @@
-package Http;
+package server;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import manager.FileBackedTasksManager;
-import manager.HistoryManager;
-import manager.Managers;
 import task.Epic;
 import task.Subtask;
 import task.Task;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 
 public class HTTPTaskManager extends FileBackedTasksManager {
     private KVTaskClient client;

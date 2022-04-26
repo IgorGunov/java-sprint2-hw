@@ -1,25 +1,18 @@
-import Http.HTTPTaskManager;
-import Http.HttpTaskServer;
-import Http.KVServer;
-import Http.KVTaskClient;
-import manager.FileBackedTasksManager;
-import manager.HistoryManager;
-import manager.Managers;
+import server.HTTPTaskManager;
+import server.HttpTaskServer;
+import server.KVServer;
+import server.KVTaskClient;
 import task.*;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Scanner;
 
 public class Main {
     private static final HTTPTaskManager manager = new HTTPTaskManager("http://localhost:8078/");
 
     public static void main(String[] args) throws IOException {
+        HttpTaskServer httpServer = new HttpTaskServer();
         Task task = new Task("Task","Task", 0, Status.DONE,  TypeTask.TASK,
                 Duration.ofDays(2) , LocalDateTime.of(2022, 10, 1, 10, 10));
         String json = "{\n" +
@@ -38,7 +31,7 @@ public class Main {
         System.out.println(client.load("DEBUG"));
         HTTPTaskManager httpTaskManager = new HTTPTaskManager("http://localhost:8078/");
         manager.addTask(task);
-
         System.out.println(client.load("DEBUG"));
+        httpServer.HttpTaskServer();
     }
 }

@@ -1,6 +1,6 @@
 package manager;
 
-import Http.HTTPTaskManager;
+import server.HTTPTaskManager;
 
 public class Managers {
 
