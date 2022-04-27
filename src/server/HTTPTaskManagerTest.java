@@ -19,21 +19,17 @@ import static org.junit.jupiter.api.Assertions.*;
 class HTTPTaskManagerTest {
     private final LocalDateTime startTime = LocalDateTime.MIN;
     private final Duration duration = Duration.between(startTime, startTime.plusSeconds(10));
-
-    Task task1 = new Task("wevf", "werg", 0, Status.NEW, TypeTask.TASK, duration, startTime);
-    Task task2 = new Task("bfhe", "etty", 1, Status.NEW, TypeTask.TASK, duration, startTime);
-    Subtask subtask1 = new Subtask("wevf", "werg", 2, 4, Status.NEW, duration, startTime);
-    Subtask subtask2 = new Subtask("rtygg", "ekkoitr", 3, 4, Status.NEW, duration, startTime);
-    Epic epic = new Epic("qwe", "qwerty", 4);
+    private final Task task = new Task("wevf", "werg", 0, Status.NEW, TypeTask.TASK, duration, startTime);
+    private final Subtask subtask = new Subtask("wevf", "werg", 2, 4, Status.NEW, duration, startTime);
+    private final Epic epic = new Epic("qwe", "qwerty", 4);
     private final HTTPTaskManager manager = new HTTPTaskManager("http://localhost:8078/");
     private static KVTaskClient client;
-    private static KVServer kvServer;
     private static Gson gson;
 
     @BeforeAll
     public static void beforeAll(){
         try {
-            kvServer = new KVServer();
+            KVServer kvServer = new KVServer();
             kvServer.start();
             gson = new GsonBuilder().setPrettyPrinting().create();
             client = new KVTaskClient("http://localhost:8078/");
@@ -74,10 +70,28 @@ class HTTPTaskManagerTest {
 
     @Test
     void saveTask() {
-        manager.addTask(task1);
-        String body = client.load("tasks");
+        manager.addTask(task);
+        String body = client.load("/tasks/task");
         JsonArray jsonArray = JsonParser.parseString(body).getAsJsonArray();
         Task taskInServer = gson.fromJson(jsonArray.get(0), Task.class);
-        assertEquals(taskInServer, task1);
+        assertEquals(taskInServer, task);
+    }
+
+    @Test
+    void saveEpic() {
+        manager.addEpic(epic);
+        String body = client.load("/tasks/epic");
+        JsonArray jsonArray = JsonParser.parseString(body).getAsJsonArray();
+        Epic taskInServer = gson.fromJson(jsonArray.get(0), Epic.class);
+        assertEquals(taskInServer, epic);
+    }
+
+    @Test
+    void saveSubtask() {
+        manager.addSubtask(subtask);
+        String body = client.load("/tasks/epic");
+        JsonArray jsonArray = JsonParser.parseString(body).getAsJsonArray();
+        Subtask taskInServer = gson.fromJson(jsonArray.get(0), Subtask.class);
+        assertEquals(taskInServer, subtask);
     }
 }
